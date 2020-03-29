@@ -409,7 +409,10 @@ function extractFromFragment(fragment, toExtract) {
   let vars = fragment.substring(1).split('&');
   for (let i = 0; i < vars.length; i++) {
     var pair = vars[i].split('=');
-    if (decodeURIComponent(pair[0]) == toExtract) {
+    if (pair.length !== 2) {
+      continue;
+    }
+    if (decodeURIComponent(pair[0]) === toExtract) {
         return decodeURIComponent(pair[1]);
     }
   }
