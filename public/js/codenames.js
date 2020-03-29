@@ -87,6 +87,7 @@ joinEnter.onclick = () => {
     room:joinRoom.value,
     password:joinPassword.value
   })
+  updateFragment();
 }
 // User Creates Room
 joinCreate.onclick = () => {      
@@ -95,6 +96,7 @@ joinCreate.onclick = () => {
     room:joinRoom.value,
     password:joinPassword.value
   })
+  updateFragment();
 }
 // User Leaves Room
 leaveRoom.onclick = () => {       
@@ -412,6 +414,13 @@ function extractFromFragment(fragment, toExtract) {
     }
   }
   return '';
+}
+
+function updateFragment() {
+  let room = joinRoom.value;
+  let password = joinPassword.value;
+  let fragment =  'room=' + encodeURIComponent(room) + '&password=' + encodeURIComponent(password);
+  window.location.hash = fragment;
 }
 
 // Client Side UI Elements
