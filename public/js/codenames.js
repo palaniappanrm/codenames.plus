@@ -87,7 +87,6 @@ joinEnter.onclick = () => {
     room:joinRoom.value,
     password:joinPassword.value
   })
-  updateFragment();
 }
 // User Creates Room
 joinCreate.onclick = () => {      
@@ -96,7 +95,6 @@ joinCreate.onclick = () => {
     room:joinRoom.value,
     password:joinPassword.value
   })
-  updateFragment();
 }
 // User Leaves Room
 leaveRoom.onclick = () => {       
@@ -212,6 +210,7 @@ socket.on('joinResponse', (data) =>{        // Response to joining room
     joinDiv.style.display = 'none'
     gameDiv.style.display = 'block'
     joinErrorMessage.innerText = ''
+    updateFragment();
   } else joinErrorMessage.innerText = data.msg
 })
 
@@ -220,6 +219,7 @@ socket.on('createResponse', (data) =>{      // Response to creating room
     joinDiv.style.display = 'none'
     gameDiv.style.display = 'block'
     joinErrorMessage.innerText = ''
+    updateFragment();
   } else joinErrorMessage.innerText = data.msg
 })
 
