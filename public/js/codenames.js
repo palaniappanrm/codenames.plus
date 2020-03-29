@@ -73,6 +73,10 @@ buttonModeTimed.disabled = false;
 buttonRoleGuesser.disabled = true;
 buttonRoleSpymaster.disabled = false;
 
+// Autofill room and password from query fragment
+joinRoom.value = extractFromFragment(window.location.hash, 'room');
+joinPassword.value = extractFromFragment(window.location.hash, 'password');
+
 
 // UI Interaction with server
 ////////////////////////////////////////////////////////////////////////////
@@ -397,6 +401,17 @@ function updatePlayerlist(players){
       blueTeam.appendChild(li)
     }
   }
+}
+
+function extractFromFragment(fragment, toExtract) {
+  let vars = fragment.substring(1).split('&');
+  for (let i = 0; i < vars.length; i++) {
+    var pair = vars[i].split('=');
+    if (decodeURIComponent(pair[0]) == toExtract) {
+        return decodeURIComponent(pair[1]);
+    }
+  }
+  return '';
 }
 
 // Client Side UI Elements
