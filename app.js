@@ -496,7 +496,8 @@ setInterval(()=>{
   }
   // Game Timer Logic
   for (let room in ROOM_LIST){
-    if (ROOM_LIST[room].mode === 'timed'){
+    if (ROOM_LIST[room].mode === 'timed'
+      && ROOM_LIST[room].game.over === false){
       ROOM_LIST[room].game.timer--          // If the room is in timed mode, count timer down
 
       if (ROOM_LIST[room].game.timer < 0){  // If timer runs out, switch that rooms turn
