@@ -102,7 +102,7 @@ class Player {
     this.team = 'undecided'
     this.role = 'guesser'
     this.timeout = 2100         // # of seconds until kicked for afk (35min)
-    this.afktimer = this.timeout       
+    this.afktimer = this.timeout
 
     // Add player to player list and add their socket to the socket list
     PLAYER_LIST[this.id] = this
@@ -141,7 +141,7 @@ io.sockets.on('connection', function(socket){
   // Room Joining. Called when client attempts to join a room
   // Data: player nickname, room name, room password
   socket.on('joinRoom', (data) => {joinRoom(socket, data)})
-  
+
   // Room Leaving. Called when client leaves a room
   socket.on('leaveRoom', () =>{leaveRoom(socket)})
 
@@ -227,7 +227,7 @@ io.sockets.on('connection', function(socket){
 
     game.updateWordPool()
     gameUpdate(room)
-    
+
   })
 
   // Change timer slider
@@ -257,7 +257,7 @@ function createRoom(socket, data){
     // Tell the client the room arleady exists
     socket.emit('createResponse', {success:false, msg:'Room Already Exists'})
   } else {
-    if (roomName === "") {    
+    if (roomName === "") {
       // Tell the client they need a valid room name
       socket.emit('createResponse', {success:false, msg:'Enter A Valid Room Name'})
     } else {
@@ -289,7 +289,7 @@ function joinRoom(socket, data){
     // Tell client the room doesnt exist
     socket.emit('joinResponse', {success:false, msg:"Room Not Found"})
   } else {
-    if (ROOM_LIST[roomName].password !== pass){ 
+    if (ROOM_LIST[roomName].password !== pass){
       // Tell client the password is incorrect
       socket.emit('joinResponse', {success:false, msg:"Incorrect Password"})
     } else {
@@ -319,7 +319,7 @@ function leaveRoom(socket){
   gameUpdate(player.room)                          // Update everyone in the room
   // Server Log
   logStats(socket.id + "(" + player.nickname + ") LEFT '" + ROOM_LIST[player.room].room + "'(" + Object.keys(ROOM_LIST[player.room].players).length + ")")
-  
+
   // If the number of players in the room is 0 at this point, delete the room entirely
   if (Object.keys(ROOM_LIST[player.room].players).length === 0) {
     delete ROOM_LIST[player.room]
@@ -340,7 +340,7 @@ function socketDisconnect(socket){
     gameUpdate(player.room)                          // Update everyone in the room
     // Server Log
     logStats(socket.id + "(" + player.nickname + ") LEFT '" + ROOM_LIST[player.room].room + "'(" + Object.keys(ROOM_LIST[player.room].players).length + ")")
-    
+
     // If the number of players in the room is 0 at this point, delete the room entirely
     if (Object.keys(ROOM_LIST[player.room].players).length === 0) {
       delete ROOM_LIST[player.room]
@@ -363,7 +363,7 @@ function randomizeTeams(socket){
 
   let keys = Object.keys(players) // Get a list of players in the room from the dictionary
   let placed = []                 // Init a temp array to keep track of who has already moved
-  
+
   while (placed.length < keys.length){
     let selection = keys[Math.floor(Math.random() * keys.length)] // Select random player index
     if (!placed.includes(selection)) placed.push(selection) // If index hasn't moved, move them
@@ -482,7 +482,7 @@ setInterval(()=>{
   if (time.getHours() === restartHour &&
       time.getMinutes() === restartMinute &&
       time.getSeconds() < restartSecond) herokuRestart()
-  
+
   // AFK Logic
   for (let player in PLAYER_LIST){
     PLAYER_LIST[player].afktimer--      // Count down every players afk timer
@@ -503,7 +503,7 @@ setInterval(()=>{
         ROOM_LIST[room].game.switchTurn()
         gameUpdate(room)   // Update everyone in the room
       }
-      
+
       // Update the timer value to every client in the room
       for (let player in ROOM_LIST[room].players){
         SOCKET_LIST[player].emit('timerUpdate', {timer:ROOM_LIST[room].game.timer})
