@@ -1,8 +1,9 @@
-FROM node
+FROM node:13
 
 RUN mkdir -p /usr/src/codenames \
     && chown node /usr/src/codenames
 EXPOSE 2000
+ENV REQUIRE_HTTPS=false
 
 USER node
 WORKDIR /usr/src/codenames
