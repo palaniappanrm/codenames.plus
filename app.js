@@ -402,17 +402,23 @@ function newGame(socket){
 // Switch role function
 // Gets clients requested role and switches it
 function switchRole(socket, data){
-  if (!PLAYER_LIST[socket.id]) return // Prevent Crash
-  let room = PLAYER_LIST[socket.id].room // Get the room that the client called from
+  let currentPlayer = PLAYER_LIST[socket.id]
+  if (!currentPlayer) return // Prevent Crash
+  let room = currentPlayer.room // Get the room that the client called from
 
-  if (PLAYER_LIST[socket.id].team === 'undecided'){
+  if (currentPlayer.team === 'undecided'){
     // Dissallow the client a role switch if they're not on a team
     socket.emit('switchRoleResponse', {success:false})
-  } else {
-    PLAYER_LIST[socket.id].role = data.role;                          // Set the new role
-    socket.emit('switchRoleResponse', {success:true, role:data.role}) // Alert client
-    gameUpdate(room)                                              // Update everyone in the room
+    return
   }
+
+  if (room.players.some(player => player.team === currentPlayer.team && player.role === 'spymaster')) {
+    socket.emit('switchRoleResponse', {success:false})
+  }
+
+  currentPlayer.role = data.role; // Set the new role
+  socket.emit('switchRoleResponse', {success:true, role:data.role}) // Alert client
+  gameUpdate(room) // Update everyone in the room
 }
 
 // Click tile function
