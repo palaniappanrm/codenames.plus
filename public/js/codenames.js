@@ -293,7 +293,16 @@ socket.on('gameState', (data) =>{           // Response to gamestate update
   updateTimerSlider(data.game, data.mode)          // Update the games timer slider
   updatePacks(data.game)                // Update the games pack information
   updatePlayerlist(data.players)        // Update the player list for the room
-  updateBoard(data.game.board)          // Update the board display
+
+  proposals = []
+  for (let i in data.players){
+    let guessProposal = data.players[i].guessProposal
+    if (guessProposal !== null){
+      proposals.push(guessProposal)
+    }
+  }
+
+  updateBoard(data.game.board, proposals)          // Update the board display
 })
 
 
@@ -356,18 +365,20 @@ function updatePacks(game){
 }
 
 // Update the board
-function updateBoard(board){
+function updateBoard(board, proposals){
   // Add description classes to each tile depending on the tiles color
   for (let x = 0; x < 5; x++){
     let row = document.getElementById('row-' + (x+1))
     for (let y = 0; y < 5; y++){
       let button = row.children[y]
       button.innerHTML = board[x][y].word
+      button.className = "tile"
       if (board[x][y].type === 'red') button.className += " r"    // Red tile
       if (board[x][y].type === 'blue') button.className += " b"   // Blue tile
       if (board[x][y].type === 'neutral') button.className += " n"// Neutral tile
       if (board[x][y].type === 'death') button.className += " d"  // Death tile
       if (board[x][y].flipped) button.className += " flipped"     // Flipped tile
+      if (proposals.includes(board[x][y].word)) button.className += " proposed" // proposed guess
       if (playerRole === 'spymaster') button.className += " s"    // Flag all tiles if the client is a spy master
       if (difficulty === 'hard') button.className += " h"         // Flag all tiles if game is in hard mode
     }
