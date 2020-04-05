@@ -441,12 +441,12 @@ function clickTile(socket, data){
     if (!ROOM_LIST[room].game.over){  // If the game is not over
       if (PLAYER_LIST[socket.id].role !== 'spymaster'){ // If the client isnt spymaster
         var doFlip = true
-        if (room.consensus === 'consensus') {
-          let pos = data.i + "," + data.j
-          PLAYER_LIST[socket.id].guessProposal = pos
+        if (ROOM_LIST[room].consensus === 'consensus') {
+          let guess = ROOM_LIST[room].game.board[data.i][data.j].word
+          PLAYER_LIST[socket.id].guessProposal = guess
           var allAgree = true
           for (let player in ROOM_LIST[room].players) {
-            if (PLAYER_LIST[player].guessProposal != pos && PLAYER_LIST[player].role !== 'spymaster') {
+            if (PLAYER_LIST[player].guessProposal !== guess && PLAYER_LIST[player].role !== 'spymaster') {
               doFlip = false
             }
           }
