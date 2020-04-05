@@ -421,11 +421,11 @@ function updatePlayerlist(players){
     li.innerText = players[i].nickname
     // If the player is a spymaster, put brackets around their name
     if (players[i].role === 'spymaster') li.innerText = "[" + players[i].nickname + "]"
-    else if (players[i].guessProposal !== null) {
-        let guessProposal = document.createElement('span')
-        guessProposal.classList.add('guess-proposal')
-        guessProposal.innerText = players[i].guessProposal
-        li.appendChild(guessProposal)
+    else if (players[i].guessProposal !== null){
+      let guessProposal = document.createElement('span')
+      guessProposal.classList.add('guess-proposal')
+      guessProposal.innerText = players[i].guessProposal
+      li.appendChild(guessProposal)
     }
     // Add the player to their teams ul
     if (players[i].team === 'undecided'){
