@@ -70,6 +70,7 @@ class Room {
     this.game = new Game()
     this.difficulty = 'normal'
     this.mode = 'casual'
+    this.consensus = 'single'
 
     // Add room to room list
     ROOM_LIST[this.room] = this
@@ -101,6 +102,7 @@ class Player {
     this.room = room
     this.team = 'undecided'
     this.role = 'guesser'
+    this.guessProposal = null
     this.timeout = 2100         // # of seconds until kicked for afk (35min)
     this.afktimer = this.timeout       
 
@@ -190,11 +192,24 @@ io.sockets.on('connection', function(socket){
     gameUpdate(room)                        // Update the game for everyone in this room
   })
 
+  // Switch Consensus Mode. Called when client switches to single / consensus
+  // Data: New consensus mode
+  socket.on('switchConsensus', (data) => {
+    if (!PLAYER_LIST[socket.id]) return // Prevent Crash
+    let room = PLAYER_LIST[socket.id].room  // Get the room the client was in
+    ROOM_LIST[room].consensus = data.consensus;       // Update the rooms consensus mode
+    gameUpdate(room)                        // Update the game for everyone in this room
+  })
+
   // End Turn. Called when client ends teams turn
   socket.on('endTurn', () => {
     if (!PLAYER_LIST[socket.id]) return // Prevent Crash
     let room = PLAYER_LIST[socket.id].room  // Get the room the client was in
     ROOM_LIST[room].game.switchTurn()       // Switch the room's game's turn
+    // Clear any guesses
+    for (let player in ROOM_LIST[room].players) {
+      PLAYER_LIST[player].guessProposal = null
+    }
     gameUpdate(room)                        // Update the game for everyone in this room
   })
 
@@ -393,6 +408,7 @@ function newGame(socket){
   // Make everyone in the room a guesser and tell their client the game is new
   for(let player in ROOM_LIST[room].players){
     PLAYER_LIST[player].role = 'guesser';
+    PLAYER_LIST[player].guessProposal = null;
     SOCKET_LIST[player].emit('switchRoleResponse', {success:true, role:'guesser'})
     SOCKET_LIST[player].emit('newGameResponse', {success:true})
   }
@@ -424,7 +440,23 @@ function clickTile(socket, data){
   if (PLAYER_LIST[socket.id].team === ROOM_LIST[room].game.turn){ // If it was this players turn
     if (!ROOM_LIST[room].game.over){  // If the game is not over
       if (PLAYER_LIST[socket.id].role !== 'spymaster'){ // If the client isnt spymaster
-        ROOM_LIST[room].game.flipTile(data.i, data.j) // Send the flipped tile info to the game
+        var doFlip = true
+        if (room.consensus === 'consensus') {
+          let pos = data.i + "," + data.j
+          PLAYER_LIST[socket.id].guessProposal = pos
+          var allAgree = true
+          for (let player in ROOM_LIST[room].players) {
+            if (PLAYER_LIST[player].guessProposal != pos && PLAYER_LIST[player].role !== 'spymaster') {
+              doFlip = false
+            }
+          }
+        }
+        if (doFlip) {
+          ROOM_LIST[room].game.flipTile(data.i, data.j) // Send the flipped tile info to the game
+          for (let player in ROOM_LIST[room].players) {
+            PLAYER_LIST[player].guessProposal = null
+          }
+        }
         gameUpdate(room)  // Update everyone in the room
       }
     }
