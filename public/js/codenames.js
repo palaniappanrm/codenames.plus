@@ -39,6 +39,8 @@ let buttonDifficultyNormal = document.getElementById('difficulty-normal')
 let buttonDifficultyHard = document.getElementById('difficulty-hard')
 let buttonModeCasual = document.getElementById('mode-casual')
 let buttonModeTimed = document.getElementById('mode-timed')
+let buttonConsensusSingle = document.getElementById('consensus-single')
+let buttonConsensusConsensus = document.getElementById('consensus-consensus')
 let buttonAbout = document.getElementById('about-button')
 let buttonAfk = document.getElementById('not-afk')
 let buttonServerMessageOkay = document.getElementById('server-message-okay')
@@ -66,12 +68,15 @@ let timer = document.getElementById('timer')
 let playerRole = 'guesser'
 let difficulty = 'normal'
 let mode = 'casual'
+let consensus = 'single'
 
 // Show the proper toggle options
 buttonModeCasual.disabled = true;
 buttonModeTimed.disabled = false;
 buttonRoleGuesser.disabled = true;
 buttonRoleSpymaster.disabled = false;
+buttonConsensusSingle.disabled = true;
+buttonConsensusConsensus.disabled = false;
 
 
 // UI Interaction with server
@@ -139,6 +144,14 @@ buttonModeTimed.onclick = () => {
 // User Picks Casual Mode
 buttonModeCasual.onclick = () => {
   socket.emit('switchMode', {mode:'casual'})
+}
+// User Picks Single Consensus Mode
+buttonConsensusSingle.onclick = () => {
+  socket.emit('switchConsensus', {consensus:'single'})
+}
+// User Picks Consensus Consensus Mode
+buttonConsensusConsensus.onclick = () => {
+  socket.emit('switchConsensus', {consensus:'consensus'})
 }
 // User Ends Turn
 endTurn.onclick = () => {
@@ -275,6 +288,7 @@ socket.on('gameState', (data) =>{           // Response to gamestate update
     wipeBoard();                        // Update the appearance of the tiles
   }
   mode = data.mode                      // Update the clients game mode
+  consensus = data.consensus            // Update the clients consensus mode
   updateInfo(data.game, data.team)      // Update the games turn information
   updateTimerSlider(data.game, data.mode)          // Update the games timer slider
   updatePacks(data.game)                // Update the games pack information
@@ -374,6 +388,14 @@ function updateBoard(board){
   } else {
     buttonModeCasual.disabled = false;
     buttonModeTimed.disabled = true;
+  }
+  // Show the proper toggle options for the game consensus mode
+  if (consensus === 'single') {
+    buttonConsensusSingle.disabled = true;
+    buttonConsensusConsensus.disabled = false;
+  } else {
+    buttonConsensusSingle.disabled = false;
+    buttonConsensusConsensus.disabled = true;
   }
 }
 

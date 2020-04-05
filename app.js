@@ -197,6 +197,7 @@ io.sockets.on('connection', function(socket){
   socket.on('switchConsensus', (data) => {
     if (!PLAYER_LIST[socket.id]) return // Prevent Crash
     let room = PLAYER_LIST[socket.id].room  // Get the room the client was in
+    clearGuessProsposals(room)
     ROOM_LIST[room].consensus = data.consensus;       // Update the rooms consensus mode
     gameUpdate(room)                        // Update the game for everyone in this room
   })
@@ -206,10 +207,7 @@ io.sockets.on('connection', function(socket){
     if (!PLAYER_LIST[socket.id]) return // Prevent Crash
     let room = PLAYER_LIST[socket.id].room  // Get the room the client was in
     ROOM_LIST[room].game.switchTurn()       // Switch the room's game's turn
-    // Clear any guesses
-    for (let player in ROOM_LIST[room].players){
-      PLAYER_LIST[player].guessProposal = null
-    }
+    clearGuessProsposals(room)
     gameUpdate(room)                        // Update the game for everyone in this room
   })
 
@@ -459,13 +457,17 @@ function clickTile(socket, data){
         }
         if (doFlip){
           ROOM_LIST[room].game.flipTile(data.i, data.j) // Send the flipped tile info to the game
-          for (let player in ROOM_LIST[room].players){
-            PLAYER_LIST[player].guessProposal = null
-          }
+          clearGuessProsposals(room)
         }
         gameUpdate(room)  // Update everyone in the room
       }
     }
+  }
+}
+
+function clearGuessProsposals(room){
+  for (let player in ROOM_LIST[room].players){
+    PLAYER_LIST[player].guessProposal = null
   }
 }
 
@@ -477,7 +479,8 @@ function gameUpdate(room){
     players:ROOM_LIST[room].players,
     game:ROOM_LIST[room].game,
     difficulty:ROOM_LIST[room].difficulty,
-    mode:ROOM_LIST[room].mode
+    mode:ROOM_LIST[room].mode,
+    consensus:ROOM_LIST[room].consensus
   }
   for (let player in ROOM_LIST[room].players){ // For everyone in the passed room
     gameState.team = PLAYER_LIST[player].team  // Add specific clients team info
