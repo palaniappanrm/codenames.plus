@@ -207,7 +207,7 @@ io.sockets.on('connection', function(socket){
     let room = PLAYER_LIST[socket.id].room  // Get the room the client was in
     ROOM_LIST[room].game.switchTurn()       // Switch the room's game's turn
     // Clear any guesses
-    for (let player in ROOM_LIST[room].players) {
+    for (let player in ROOM_LIST[room].players){
       PLAYER_LIST[player].guessProposal = null
     }
     gameUpdate(room)                        // Update the game for everyone in this room
@@ -441,19 +441,25 @@ function clickTile(socket, data){
     if (!ROOM_LIST[room].game.over){  // If the game is not over
       if (PLAYER_LIST[socket.id].role !== 'spymaster'){ // If the client isnt spymaster
         var doFlip = true
-        if (ROOM_LIST[room].consensus === 'consensus') {
+        if (ROOM_LIST[room].consensus === 'consensus'){
           let guess = ROOM_LIST[room].game.board[data.i][data.j].word
+          // If player already made this guess, then toggle to them not making any guess.
+          if (PLAYER_LIST[socket.id].guessProposal === guess){
+            PLAYER_LIST[socket.id].guessProposal = null
+            gameUpdate(room)  // Update everyone in the room
+            return
+          }
           PLAYER_LIST[socket.id].guessProposal = guess
           var allAgree = true
-          for (let player in ROOM_LIST[room].players) {
-            if (PLAYER_LIST[player].guessProposal !== guess && PLAYER_LIST[player].role !== 'spymaster') {
+          for (let player in ROOM_LIST[room].players){
+            if (PLAYER_LIST[player].guessProposal !== guess && PLAYER_LIST[player].role !== 'spymaster'){
               doFlip = false
             }
           }
         }
-        if (doFlip) {
+        if (doFlip){
           ROOM_LIST[room].game.flipTile(data.i, data.j) // Send the flipped tile info to the game
-          for (let player in ROOM_LIST[room].players) {
+          for (let player in ROOM_LIST[room].players){
             PLAYER_LIST[player].guessProposal = null
           }
         }
