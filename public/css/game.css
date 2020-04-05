@@ -156,6 +156,14 @@
   color: #F8FDFF;
 }
 
+#board .tile.proposed {
+  border-color: #cead00;
+}
+
+#board .tile.proposed:hover {
+  border-color: #8a7400;
+}
+
 
 #toggles {
   position: relative;

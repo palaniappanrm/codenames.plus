@@ -477,6 +477,19 @@ button {
   color: #11779F;
 }
 
+#players #panel .guess-proposal {
+  font-size: 0.8em;
+  line-height: 1;
+  padding-bottom: 0.5em;
+  display: block;
+}
+#players #panel .guess-proposal::before {
+  content: " (";
+}
+#players #panel .guess-proposal::after {
+  content: "?)";
+}
+
 #card-packs {
   position: relative;
   width: 100%;
