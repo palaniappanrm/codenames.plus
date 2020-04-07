@@ -1,4 +1,4 @@
-let socket = io() // Connect to server
+let socket = io({path: window.location.pathname + 'socket.io'}) // Connect to server
 
 
 // Sign In Page Elements
