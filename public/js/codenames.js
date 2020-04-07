@@ -78,6 +78,10 @@ buttonRoleSpymaster.disabled = false;
 buttonConsensusSingle.disabled = true;
 buttonConsensusConsensus.disabled = false;
 
+// Autofill room and password from query fragment
+joinRoom.value = extractFromFragment(window.location.hash, 'room');
+joinPassword.value = extractFromFragment(window.location.hash, 'password');
+
 
 // UI Interaction with server
 ////////////////////////////////////////////////////////////////////////////
@@ -219,6 +223,7 @@ socket.on('joinResponse', (data) =>{        // Response to joining room
     joinDiv.style.display = 'none'
     gameDiv.style.display = 'block'
     joinErrorMessage.innerText = ''
+    updateFragment();
   } else joinErrorMessage.innerText = data.msg
 })
 
@@ -227,6 +232,7 @@ socket.on('createResponse', (data) =>{      // Response to creating room
     joinDiv.style.display = 'none'
     gameDiv.style.display = 'block'
     joinErrorMessage.innerText = ''
+    updateFragment();
   } else joinErrorMessage.innerText = data.msg
 })
 
@@ -436,6 +442,27 @@ function updatePlayerlist(players){
       blueTeam.appendChild(li)
     }
   }
+}
+
+function extractFromFragment(fragment, toExtract) {
+  let vars = fragment.substring(1).split('&');
+  for (let i = 0; i < vars.length; i++) {
+    var pair = vars[i].split('=');
+    if (pair.length !== 2) {
+      continue;
+    }
+    if (decodeURIComponent(pair[0]) === toExtract) {
+        return decodeURIComponent(pair[1]);
+    }
+  }
+  return '';
+}
+
+function updateFragment() {
+  let room = joinRoom.value;
+  let password = joinPassword.value;
+  let fragment =  'room=' + encodeURIComponent(room) + '&password=' + encodeURIComponent(password);
+  window.location.hash = fragment;
 }
 
 // Client Side UI Elements
