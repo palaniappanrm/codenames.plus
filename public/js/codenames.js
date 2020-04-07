@@ -39,6 +39,8 @@ let buttonDifficultyNormal = document.getElementById('difficulty-normal')
 let buttonDifficultyHard = document.getElementById('difficulty-hard')
 let buttonModeCasual = document.getElementById('mode-casual')
 let buttonModeTimed = document.getElementById('mode-timed')
+let buttonConsensusSingle = document.getElementById('consensus-single')
+let buttonConsensusConsensus = document.getElementById('consensus-consensus')
 let buttonAbout = document.getElementById('about-button')
 let buttonAfk = document.getElementById('not-afk')
 let buttonServerMessageOkay = document.getElementById('server-message-okay')
@@ -66,12 +68,15 @@ let timer = document.getElementById('timer')
 let playerRole = 'guesser'
 let difficulty = 'normal'
 let mode = 'casual'
+let consensus = 'single'
 
 // Show the proper toggle options
 buttonModeCasual.disabled = true;
 buttonModeTimed.disabled = false;
 buttonRoleGuesser.disabled = true;
 buttonRoleSpymaster.disabled = false;
+buttonConsensusSingle.disabled = true;
+buttonConsensusConsensus.disabled = false;
 
 
 // UI Interaction with server
@@ -139,6 +144,14 @@ buttonModeTimed.onclick = () => {
 // User Picks Casual Mode
 buttonModeCasual.onclick = () => {
   socket.emit('switchMode', {mode:'casual'})
+}
+// User Picks Single Consensus Mode
+buttonConsensusSingle.onclick = () => {
+  socket.emit('switchConsensus', {consensus:'single'})
+}
+// User Picks Consensus Consensus Mode
+buttonConsensusConsensus.onclick = () => {
+  socket.emit('switchConsensus', {consensus:'consensus'})
 }
 // User Ends Turn
 endTurn.onclick = () => {
@@ -275,11 +288,21 @@ socket.on('gameState', (data) =>{           // Response to gamestate update
     wipeBoard();                        // Update the appearance of the tiles
   }
   mode = data.mode                      // Update the clients game mode
+  consensus = data.consensus            // Update the clients consensus mode
   updateInfo(data.game, data.team)      // Update the games turn information
   updateTimerSlider(data.game, data.mode)          // Update the games timer slider
   updatePacks(data.game)                // Update the games pack information
   updatePlayerlist(data.players)        // Update the player list for the room
-  updateBoard(data.game.board)          // Update the board display
+
+  proposals = []
+  for (let i in data.players){
+    let guessProposal = data.players[i].guessProposal
+    if (guessProposal !== null){
+      proposals.push(guessProposal)
+    }
+  }
+
+  updateBoard(data.game.board, proposals)          // Update the board display
 })
 
 
@@ -342,18 +365,20 @@ function updatePacks(game){
 }
 
 // Update the board
-function updateBoard(board){
+function updateBoard(board, proposals){
   // Add description classes to each tile depending on the tiles color
   for (let x = 0; x < 5; x++){
     let row = document.getElementById('row-' + (x+1))
     for (let y = 0; y < 5; y++){
       let button = row.children[y]
       button.innerHTML = board[x][y].word
+      button.className = "tile"
       if (board[x][y].type === 'red') button.className += " r"    // Red tile
       if (board[x][y].type === 'blue') button.className += " b"   // Blue tile
       if (board[x][y].type === 'neutral') button.className += " n"// Neutral tile
       if (board[x][y].type === 'death') button.className += " d"  // Death tile
       if (board[x][y].flipped) button.className += " flipped"     // Flipped tile
+      if (proposals.includes(board[x][y].word)) button.className += " proposed" // proposed guess
       if (playerRole === 'spymaster') button.className += " s"    // Flag all tiles if the client is a spy master
       if (difficulty === 'hard') button.className += " h"         // Flag all tiles if game is in hard mode
     }
@@ -375,6 +400,14 @@ function updateBoard(board){
     buttonModeCasual.disabled = false;
     buttonModeTimed.disabled = true;
   }
+  // Show the proper toggle options for the game consensus mode
+  if (consensus === 'single') {
+    buttonConsensusSingle.disabled = true;
+    buttonConsensusConsensus.disabled = false;
+  } else {
+    buttonConsensusSingle.disabled = false;
+    buttonConsensusConsensus.disabled = true;
+  }
 }
 
 // Update the player list
@@ -388,6 +421,12 @@ function updatePlayerlist(players){
     li.innerText = players[i].nickname
     // If the player is a spymaster, put brackets around their name
     if (players[i].role === 'spymaster') li.innerText = "[" + players[i].nickname + "]"
+    else if (players[i].guessProposal !== null){
+      let guessProposal = document.createElement('span')
+      guessProposal.classList.add('guess-proposal')
+      guessProposal.innerText = players[i].guessProposal
+      li.appendChild(guessProposal)
+    }
     // Add the player to their teams ul
     if (players[i].team === 'undecided'){
       undefinedList.appendChild(li)
