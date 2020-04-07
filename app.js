@@ -10,16 +10,22 @@ let app = express()
 //Set up server
 let server = app.listen(process.env.PORT || 2000, listen);
 
+let requireHttps = (process.env.REQUIRE_HTTPS == "true");
+
 // Callback function confirming server start
 function listen(){
   let host = server.address().address;
   let port = server.address().port;
   console.log('Codenames Server Started at http://' + host + ':' + port);
+
+  if (requireHttps) {
+    console.log("Https Required");
+  }
 }
 
 // Force SSL
 app.use((req, res, next) => {
-  if (req.header('x-forwarded-proto') !== 'https') {
+  if (requireHttps && req.header('x-forwarded-proto') !== 'https') {
     res.redirect(`https://${req.header('host')}${req.url}`)
   } else {
     next();
