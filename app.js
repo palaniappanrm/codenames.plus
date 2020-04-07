@@ -432,8 +432,15 @@ function switchRole(socket, data){
     return
   }
 
-  if (room.players.some(player => player.team === currentPlayer.team && player.role === 'spymaster')) {
+  var teamHasSpymaster = false
+  for (let player in ROOM_LIST[room].players){
+    if (PLAYER_LIST[player].team === currentPlayer.team && PLAYER_LIST[player].role === 'spymaster'){
+      teamHasSpymaster = true
+    }
+  }
+  if (teamHasSpymaster){
     socket.emit('switchRoleResponse', {success:false})
+    return
   }
 
   currentPlayer.role = data.role; // Set the new role
