@@ -436,6 +436,7 @@ function switchRole(socket, data){
   for (let player in ROOM_LIST[room].players){
     if (PLAYER_LIST[player].team === currentPlayer.team && PLAYER_LIST[player].role === 'spymaster'){
       teamHasSpymaster = true
+      break
     }
   }
   if (teamHasSpymaster){
