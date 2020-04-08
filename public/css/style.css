@@ -201,7 +201,7 @@ Grey: #D6D2C9
 #donate {
   position: absolute;
   top: 0; 
-  display: block;
+  display: none;
   width: 100vw;
   text-align: center;
   font-size: 14px;
