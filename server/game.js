@@ -135,7 +135,6 @@ class Game{
     this.timer = this.timerAmount               // Reset timer
     if (this.turn === 'blue') this.turn = 'red' // Swith turn
     else this.turn = 'blue'
-    this.log.push({ 'event': 'switchTurn', 'team': this.turn })
     this.clue = null
   }
 
