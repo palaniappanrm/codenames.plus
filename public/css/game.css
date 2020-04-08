@@ -259,3 +259,26 @@
 #toggles #player-difficulty {
   display: none;
 }
+
+#log {
+  clear: both;
+}
+
+#log::before {
+  clear: both;
+  content: "GAME LOG:";
+  color: #F8FDFF;
+  font-weight: bold;
+}
+
+#log span {
+  display: list-item;
+}
+
+#log .red {
+  color: #B32728;
+}
+
+#log .blue {
+  color: #11779F;
+}

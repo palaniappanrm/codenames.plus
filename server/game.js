@@ -59,6 +59,7 @@ class Game{
 
     this.board        // Init the board
     this.newBoard()   // Populate the board
+    this.log = []     // Initialize empty log
     this.clue = null
   }
 
@@ -81,6 +82,11 @@ class Game{
   flipTile(i,j){
     if (!this.board[i][j].flipped){
       let type = this.board[i][j].type // Find the type of tile (red/blue/neutral/death)
+      let logEntry = { 'event': 'flipTile',
+                       'team': this.turn,
+                       'word': this.board[i][j].word,
+                       'type': type,
+                       'endedTurn': false }
       this.board[i][j].flipped = true  // Flip tile
       if (type === 'death') { // If death was flipped, end the game and find winner
         this.over = true
@@ -128,6 +134,7 @@ class Game{
     this.timer = this.timerAmount               // Reset timer
     if (this.turn === 'blue') this.turn = 'red' // Swith turn
     else this.turn = 'blue'
+    this.log.push({ 'event': 'switchTurn', 'team': this.turn })
     this.clue = null
   }
 

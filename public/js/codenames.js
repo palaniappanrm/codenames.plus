@@ -26,6 +26,7 @@ let afkWindow = document.getElementById('afk-window')
 let serverMessageWindow = document.getElementById('server-message')
 let serverMessage = document.getElementById('message')
 let overlay = document.getElementById('overlay')
+let logDiv = document.getElementById('log')
 // Buttons
 let leaveRoom = document.getElementById('leave-room')
 let joinRed = document.getElementById('join-red')
@@ -318,6 +319,7 @@ socket.on('gameState', (data) =>{           // Response to gamestate update
   }
 
   updateBoard(data.game.board, proposals)          // Update the board display
+  updateLog(data.game.log)
 })
 
 
@@ -460,6 +462,24 @@ function updatePlayerlist(players){
       blueTeam.appendChild(li)
     }
   }
+}
+
+function updateLog(log){
+  logDiv.innerHTML = ''
+  log.forEach(logEntry => {
+    let logSpan = document.createElement('span')
+    logSpan.className = logEntry.event + " " + logEntry.team
+    if (logEntry.event === 'flipTile'){
+      logSpan.innerText = (logEntry.team + " team flipped " + logEntry.word
+                           + " (" + logEntry.type + ")"
+                           + (logEntry.type === 'death' ? " ending the game"
+                              : logEntry.endedTurn ? " ending their turn"
+                              : ""))
+    } else if (logEntry.event === 'switchTurn'){
+      logSpan.innerText = "Switched to " + logEntry.team + " team's turn"
+    }
+    logDiv.appendChild(logSpan)
+  })
 }
 
 function extractFromFragment(fragment, toExtract) {
