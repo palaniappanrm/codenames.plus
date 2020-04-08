@@ -134,6 +134,8 @@ newGame.onclick = () => {
 }
 clueDeclareButton.onclick = () => {
   socket.emit('declareClue', {word: clueWord.value, count: clueCount.value})
+  clueWord.value = ''
+  clueCount.value = 1
   return false
 }
 // User Picks spymaster Role
