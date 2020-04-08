@@ -111,6 +111,7 @@ class Game{
   declareClue(clue){
     if (this.clue === null){
       this.clue = clue
+      this.log.push({ 'event': 'declareClue', 'team': this.turn, 'clue': clue })
       return true
     }
     else{

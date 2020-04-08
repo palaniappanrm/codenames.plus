@@ -475,8 +475,17 @@ function updateLog(log){
                            + (logEntry.type === 'death' ? " ending the game"
                               : logEntry.endedTurn ? " ending their turn"
                               : ""))
-    } else if (logEntry.event === 'switchTurn'){
+    }
+    else if (logEntry.event === 'switchTurn'){
       logSpan.innerText = "Switched to " + logEntry.team + " team's turn"
+    }
+    else if (logEntry.event === 'declareClue'){
+      logSpan.innerText = (logEntry.team + ' team was given the clue "'
+                           + logEntry.clue.word + '" ('
+                           + (logEntry.clue.count === 'unlimited'
+                              ? '∞'
+                              : logEntry.clue.count)
+                           + ')')
     }
     logDiv.appendChild(logSpan)
   })
