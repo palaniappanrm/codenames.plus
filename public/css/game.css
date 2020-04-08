@@ -266,7 +266,7 @@
 
 #log::before {
   clear: both;
-  content: "GAME LOG:";
+  content: "GAME LOG (newest first):";
   color: #F8FDFF;
   font-weight: bold;
 }

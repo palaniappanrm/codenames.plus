@@ -487,7 +487,7 @@ function updateLog(log){
                               : logEntry.clue.count)
                            + ')')
     }
-    logDiv.appendChild(logSpan)
+    logDiv.prepend(logSpan)
   })
 }
 
