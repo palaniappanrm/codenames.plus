@@ -471,7 +471,7 @@ function clickTile(socket, data){
           PLAYER_LIST[socket.id].guessProposal = guess
           var allAgree = true
           for (let player in ROOM_LIST[room].players){
-            if (PLAYER_LIST[player].guessProposal !== guess && PLAYER_LIST[player].role !== 'spymaster'){
+            if (PLAYER_LIST[player].guessProposal !== guess && PLAYER_LIST[player].role !== 'spymaster' && PLAYER_LIST[player].team === ROOM_LIST[room].game.turn){
               doFlip = false
             }
           }
