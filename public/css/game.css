@@ -282,3 +282,7 @@
 #log .blue {
   color: #11779F;
 }
+
+#log .declareClue {
+  font-weight: bold;
+}
