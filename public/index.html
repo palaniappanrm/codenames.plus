@@ -110,8 +110,27 @@
       <div id="app">
         <div id="info">
           <p id='score'><span id='score-red'></span> - <span id='score-blue'></span></p>
-          <h2 id='turn'><span id='status'></span> <span id='timer'></span></h2>
+          <h2 id='turn'><span id='status'></span> <span id='timer'></span> <span id='clue-display'></span></h2>
           <button id='end-turn'>End Turn</button>
+        </div>
+        <div id="clue-form">
+          <form name="clue">
+            <input type="text" id="clue-word">
+            <select id="clue-count">
+              <option value="0">0</option>
+              <option value="1" selected>1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+              <option value="6">6</option>
+              <option value="7">7</option>
+              <option value="8">8</option>
+              <option value="9">9</option>
+              <option value="unlimited">∞</option>
+            </select>
+            <button id='declare-clue'>Announce Clue</button>
+          </form>
         </div>
         <div id="board">
           <div class='row' id='row-1'>

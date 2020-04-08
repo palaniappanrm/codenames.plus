@@ -59,6 +59,7 @@ class Game{
 
     this.board        // Init the board
     this.newBoard()   // Populate the board
+    this.clue = null
   }
 
   // Check the number of unflipped team tiles and determine if someone won
@@ -86,9 +87,28 @@ class Game{
         if(this.turn === 'blue') this.winner = 'red'
         else this.winner = 'blue'
       }
-      else if (type === 'neutral') this.switchTurn() // Switch turn if neutral was flipped
-      else if (type !== this.turn) this.switchTurn() // Switch turn if opposite teams tile was flipped
+      else if (type === 'neutral' // Switch turn if neutral was flipped
+            || type !== this.turn // Switch turn if opposite teams tile was flipped
+      ) {
+        logEntry.endedTurn = true
+      }
+      this.log.push(logEntry)
+      // Log the tile flip first, then log switching turns.
+      if (logEntry.endedTurn){
+        this.switchTurn()
+      }
       this.checkWin() // See if the game is over
+    }
+  }
+
+  // Attempt to declare clue. Returns false if this turn already has one.
+  declareClue(clue){
+    if (this.clue === null){
+      this.clue = clue
+      return true
+    }
+    else{
+      return false
     }
   }
 
@@ -108,6 +128,7 @@ class Game{
     this.timer = this.timerAmount               // Reset timer
     if (this.turn === 'blue') this.turn = 'red' // Swith turn
     else this.turn = 'blue'
+    this.clue = null
   }
 
   // 50% red turn, 50% blue turn

@@ -19,6 +19,7 @@ let joinCreate = document.getElementById('join-create')
 ////////////////////////////////////////////////////////////////////////////
 // Divs
 let gameDiv = document.getElementById('game')
+let clueEntryDiv = document.getElementById('clue-form')
 let boardDiv = document.getElementById('board')
 let aboutWindow = document.getElementById('about-window')
 let afkWindow = document.getElementById('afk-window')
@@ -32,6 +33,7 @@ let joinBlue = document.getElementById('join-blue')
 let randomizeTeams = document.getElementById('randomize-teams')
 let endTurn = document.getElementById('end-turn')
 let newGame = document.getElementById('new-game')
+let clueDeclareButton = document.getElementById('declare-clue')
 let buttonRoleGuesser = document.getElementById('role-guesser')
 let buttonRoleSpymaster = document.getElementById('role-spymaster')
 let toggleDifficulty = document.getElementById('player-difficulty')
@@ -48,6 +50,9 @@ let buttonBasecards = document.getElementById('base-pack')
 let buttonDuetcards = document.getElementById('duet-pack')
 let buttonUndercovercards = document.getElementById('undercover-pack')
 let buttonNLSScards = document.getElementById('nlss-pack')
+// Clue entry
+let clueWord = document.getElementById('clue-word')
+let clueCount = document.getElementById('clue-count')
 // Slider
 let timerSlider = document.getElementById('timer-slider')
 let timerSliderLabel = document.getElementById('timer-slider-label')
@@ -60,6 +65,7 @@ let scoreRed = document.getElementById('score-red')
 let scoreBlue = document.getElementById('score-blue')
 let turnMessage = document.getElementById('status')
 let timer = document.getElementById('timer')
+let clueDisplay = document.getElementById('clue-display')
 
 
 // init
@@ -124,6 +130,9 @@ randomizeTeams.onclick = () => {
 // User Starts New Game
 newGame.onclick = () => {         
   socket.emit('newGame', {})
+}
+clueDeclareButton.onclick = () => {
+  socket.emit('declareClue', {word: clueWord.value, count: clueCount.value})
 }
 // User Picks spymaster Role
 buttonRoleSpymaster.onclick = () => { 
@@ -338,7 +347,16 @@ function updateInfo(game, team){
   }
   if (team !== game.turn) endTurn.disabled = true         // Disable end turn button for opposite team
   else endTurn.disabled = false
-  if (playerRole === 'spymaster') endTurn.disabled = true // Disable end turn button for spymasters
+  if (playerRole === 'spymaster') {
+    endTurn.disabled = true // Disable end turn button for spymasters
+  }
+  clueEntryDiv.style.display = playerRole === 'spymaster' && game.clue === null && team === game.turn ? '' : 'none'
+  if (game.over || game.clue === null){
+    clueDisplay.innerText = ''
+  }
+  else {
+    clueDisplay.innerText = game.clue.word + " (" + (game.clue.count === 'unlimited' ? '∞' : game.clue.count) + ")"
+  }
 }
 
 // Update the clients timer slider

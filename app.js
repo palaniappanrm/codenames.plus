@@ -221,6 +221,8 @@ io.sockets.on('connection', function(socket){
   // Data: x and y location of tile in grid
   socket.on('clickTile', (data) => {clickTile(socket, data)})
 
+  socket.on('declareClue', (data) => {declareClue(socket, data)})
+
   // Active. Called whenever client interacts with the game, resets afk timer
   socket.on('*', () => {
     if (!PLAYER_LIST[socket.id]) return // Prevent Crash
@@ -479,6 +481,24 @@ function clickTile(socket, data){
           clearGuessProsposals(room)
         }
         gameUpdate(room)  // Update everyone in the room
+      }
+    }
+  }
+}
+
+// Declare clue function
+// Gets client and the clue they gave and pushes that change to the rooms game
+function declareClue(socket, data){
+  if (!PLAYER_LIST[socket.id]) return // Prevent Crash
+  let room = PLAYER_LIST[socket.id].room  // Get the room that the client called from
+  let game = ROOM_LIST[room].game
+
+  if (PLAYER_LIST[socket.id].team === game.turn){ // If it was this players turn
+    if (!game.over){  // If the game is not over
+      if (PLAYER_LIST[socket.id].role === 'spymaster'){ // If the client is spymaster
+        if (game.declareClue(data)){
+          gameUpdate(room)  // Update everyone in the room
+        }
       }
     }
   }

@@ -31,6 +31,7 @@
   margin: 0;
   font-size: 35px;
   text-align: center;
+  line-height: 1.2;
   color: #F8FDFF;
   float: left;
 }
@@ -41,6 +42,11 @@
 
 #info .blue {
   color: #11779F !important;
+}
+
+#info #clue-display {
+  display: block;
+  line-height: 1.2;
 }
 
 #info #end-turn {
@@ -63,6 +69,33 @@
 }
 
 #info #end-turn:disabled {
+  background: #323032;
+  border: 2px solid #686c6d;
+  color: #686c6d;
+  cursor: default;
+}
+
+#clue-form {
+  text-align: center;
+}
+
+#clue-form #clue-word, #clue-form #clue-count, #clue-form #declare-clue {
+  font-size: 16px;
+  background: #323032;
+  border: 2px solid #F8FDFF;
+  color: #F8FDFF;
+  text-decoration: none;
+}
+
+#clue-form #declare-clue {
+  width: 19%;
+}
+
+#clue-form #declare-clue:hover {
+  background: #686c6d;
+}
+
+#clue-form #declare-clue:disabled {
   background: #323032;
   border: 2px solid #686c6d;
   color: #686c6d;
