@@ -321,7 +321,8 @@ socket.on('gameState', (data) =>{           // Response to gamestate update
     }
   }
 
-  updateBoard(data.game.board, proposals)          // Update the board display
+  // Update the board display
+  updateBoard(data.game.board, proposals, data.game.over)
   updateLog(data.game.log)
 })
 
@@ -394,7 +395,7 @@ function updatePacks(game){
 }
 
 // Update the board
-function updateBoard(board, proposals){
+function updateBoard(board, proposals, gameOver){
   // Add description classes to each tile depending on the tiles color
   for (let x = 0; x < 5; x++){
     let row = document.getElementById('row-' + (x+1))
@@ -408,7 +409,7 @@ function updateBoard(board, proposals){
       if (board[x][y].type === 'death') button.className += " d"  // Death tile
       if (board[x][y].flipped) button.className += " flipped"     // Flipped tile
       if (proposals.includes(board[x][y].word)) button.className += " proposed" // proposed guess
-      if (playerRole === 'spymaster') button.className += " s"    // Flag all tiles if the client is a spy master
+      if (playerRole === 'spymaster' || gameOver) button.className += " s"    // Flag all tiles if the client is a spy master
       if (difficulty === 'hard') button.className += " h"         // Flag all tiles if game is in hard mode
     }
   }
