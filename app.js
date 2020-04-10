@@ -473,6 +473,7 @@ function clickTile(socket, data){
           for (let player in ROOM_LIST[room].players){
             if (PLAYER_LIST[player].guessProposal !== guess && PLAYER_LIST[player].role !== 'spymaster' && PLAYER_LIST[player].team === ROOM_LIST[room].game.turn){
               doFlip = false
+              break
             }
           }
         }
