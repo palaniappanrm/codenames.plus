@@ -6,6 +6,7 @@ let express = require('express')
 
 // Create app
 let app = express()
+app.disable('x-powered-by');
 
 //Set up server
 let server = app.listen(process.env.PORT || 2000, listen);
