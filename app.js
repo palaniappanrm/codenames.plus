@@ -435,6 +435,13 @@ function switchRole(socket, data){
     return
   }
 
+  if (currentPlayer.role === 'spymaster'){
+    // Dissallow the client a role switch if they're already spymaster
+    //   so they've seen the answers.
+    socket.emit('switchRoleResponse', {success:false})
+    return
+  }
+
   // Do not allow to switch to spymaster if there is already one in the team
   if (data.role === 'spymaster') {
     for (let player in ROOM_LIST[room].players) {
