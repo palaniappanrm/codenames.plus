@@ -235,7 +235,9 @@ io.sockets.on('connection', function(socket){
     if (!PLAYER_LIST[socket.id]) return // Prevent Crash
     let room = PLAYER_LIST[socket.id].room  // Get the room the client was in
     let game = ROOM_LIST[room].game
-    if(data.pack === 'base'){               // Toggle packs in the game
+    if (data.pack === 'hullor') {             // Toggle packs in the game
+      game.hullor = !game.hullor
+    } else if(data.pack === 'base'){
       game.base = !game.base
     } else if (data.pack === 'duet'){
       game.duet = !game.duet
@@ -244,8 +246,8 @@ io.sockets.on('connection', function(socket){
     } else if (data.pack === 'nlss'){
       game.nlss = !game.nlss
     }
-    // If all options are disabled, re-enable the base pack
-    if (!game.base && !game.duet && !game.undercover && !game.nlss) game.base = true
+    // If all options are disabled, re-enable the hullor pack
+    if (!game.base && !game.duet && !game.undercover && !game.nlss && !game.hullor) game.hullor = true
 
     game.updateWordPool()
     gameUpdate(room)

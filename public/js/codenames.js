@@ -47,6 +47,7 @@ let buttonConsensusConsensus = document.getElementById('consensus-consensus')
 let buttonAbout = document.getElementById('about-button')
 let buttonAfk = document.getElementById('not-afk')
 let buttonServerMessageOkay = document.getElementById('server-message-okay')
+let buttonHullorcards = document.getElementById('hullor-pack')
 let buttonBasecards = document.getElementById('base-pack')
 let buttonDuetcards = document.getElementById('duet-pack')
 let buttonUndercovercards = document.getElementById('undercover-pack')
@@ -189,6 +190,10 @@ buttonAbout.onclick = () => {
     overlay.style.display = 'none'
     buttonAbout.className = 'above'
   }
+}
+// User Clicks card pack
+buttonHullorcards.onclick = () => {
+  socket.emit('changeCards', {pack:'hullor'})
 }
 // User Clicks card pack
 buttonBasecards.onclick = () => {
@@ -383,6 +388,8 @@ function updateTimerSlider(game, mode){
 
 // Update the pack toggle buttons
 function updatePacks(game){
+  if (game.hullor) buttonHullorcards.className = 'enabled'
+  else buttonHullorcards.className = ''
   if (game.base) buttonBasecards.className = 'enabled'
   else buttonBasecards.className = ''
   if (game.duet) buttonDuetcards.className = 'enabled'

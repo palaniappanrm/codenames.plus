@@ -2,6 +2,14 @@
 let fs = require('fs')
 let readline = require('readline')
 
+// Load Hullor words into an array
+let hullorwords = []
+filename = './server/hullor-words.txt'
+readline.createInterface({
+  input: fs.createReadStream(filename),
+  terminal: false
+}).on('line', (line) => {hullorwords.push(line)})
+
 // Load base words into an array
 let basewords = []
 var filename = './server/words.txt'
@@ -39,8 +47,9 @@ class Game{
   constructor(){
     this.timerAmount = 61 // Default timer value
 
-    this.words = basewords  // Load default word pack
-    this.base = true
+    this.words = hullorwords  // Load hullor words as default word pack
+    this.hullor = true
+    this.base = false
     this.duet = false
     this.undercover = false
     this.nlss = false
@@ -204,6 +213,7 @@ class Game{
 
   updateWordPool(){
     let pool = []
+    if (this.hullor) pool = pool.concat(hullorwords)
     if (this.base) pool = pool.concat(basewords)
     if (this.duet) pool = pool.concat(duetwords)
     if (this.undercover) pool = pool.concat(undercoverwords)
