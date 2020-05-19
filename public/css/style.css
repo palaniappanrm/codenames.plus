@@ -13,7 +13,7 @@ Grey: #D6D2C9
 
 @media(max-width: 1600px){
   #board .row .tile{
-    height: 90px !important;
+    height: 70px !important;
     font-size: 18px;
   }
 
@@ -36,6 +36,11 @@ Grey: #D6D2C9
   }
 
   #left {
+    position: relative;
+    width: 950px !important;
+  }
+
+  #right {
     position: relative;
     width: 950px !important;
   }
@@ -80,6 +85,12 @@ Grey: #D6D2C9
   #left {
     float: none !important;
     margin: 40px 20px 0 !important;
+    width: auto !important;
+  }
+
+  #right {
+    float: none !important;
+    margin:  0 20px 40px !important;
     width: auto !important;
   }
 
@@ -152,7 +163,7 @@ Grey: #D6D2C9
     hyphens: auto;
     word-wrap: break-word;
     vertical-align: top;
-    height: 70px !important;
+    height: 50px !important;
   }
 
   #toggles {
@@ -504,6 +515,14 @@ button {
   position: relative;
   width: 200px;
   margin-right: 50px;
+  margin-top: 95px;
+  float: left;
+}
+
+#right {
+  position: relative;
+  width: 200px;
+  margin-left: 50px;
   margin-top: 95px;
   float: left;
 }
