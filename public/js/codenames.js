@@ -352,11 +352,11 @@ function wipeBoard(){
 function updateInfo(game, team, roomScoreRed, roomScoreBlue){
   scoreBlue.innerHTML = game.blue                         // Update the blue tiles left
   scoreRed.innerHTML = game.red                           // Update the red tiles left
+  overallScoreRed.innerHTML=roomScoreRed
+  overallScoreBlue.innerHTML=roomScoreBlue
   turnMessage.innerHTML = game.turn + "'s turn"           // Update the turn msg
   turnMessage.className = game.turn                       // Change color of turn msg
   if (game.over){                                         // Display winner
-    overallScoreRed.innerHTML=roomScoreRed
-    overallScoreBlue.innerHTML=roomScoreBlue
     turnMessage.innerHTML = game.winner + " wins!"
     turnMessage.className = game.winner
   }
