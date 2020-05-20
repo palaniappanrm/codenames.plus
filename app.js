@@ -78,7 +78,8 @@ class Room {
     this.difficulty = 'normal'
     this.mode = 'casual'
     this.consensus = 'single'
-
+    this.overallScoreRed = 0
+    this.overallScoreBlue = 0
     // Add room to room list
     ROOM_LIST[this.room] = this
   }
@@ -491,6 +492,13 @@ function clickTile(socket, data){
           ROOM_LIST[room].game.flipTile(data.i, data.j) // Send the flipped tile info to the game
           clearGuessProsposals(room)
         }
+        if(ROOM_LIST[room].game.over){
+          if(ROOM_LIST[room].game.winner === 'red'){
+            ROOM_LIST[room].overallScoreRed=ROOM_LIST[room].overallScoreRed+1
+          }else if(ROOM_LIST[room].game.winner === 'blue'){
+            ROOM_LIST[room].overallScoreBlue=ROOM_LIST[room].overallScoreBlue+1
+          }
+        }
         gameUpdate(room)  // Update everyone in the room
       }
     }
@@ -528,6 +536,8 @@ function gameUpdate(room){
     room: room,
     players:ROOM_LIST[room].players,
     game:ROOM_LIST[room].game,
+    overallScoreRed:ROOM_LIST[room].overallScoreRed,
+    overallScoreBlue:ROOM_LIST[room].overallScoreBlue,
     difficulty:ROOM_LIST[room].difficulty,
     mode:ROOM_LIST[room].mode,
     consensus:ROOM_LIST[room].consensus
