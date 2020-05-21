@@ -19,6 +19,8 @@ let joinCreate = document.getElementById('join-create')
 ////////////////////////////////////////////////////////////////////////////
 // Divs
 let gameDiv = document.getElementById('game')
+let overallScoreRed = document.getElementById('overall-score-red')
+let overallScoreBlue = document.getElementById('overall-score-blue')
 let clueEntryDiv = document.getElementById('clue-form')
 let boardDiv = document.getElementById('board')
 let aboutWindow = document.getElementById('about-window')
@@ -308,7 +310,7 @@ socket.on('gameState', (data) =>{           // Response to gamestate update
   }
   mode = data.mode                      // Update the clients game mode
   consensus = data.consensus            // Update the clients consensus mode
-  updateInfo(data.game, data.team)      // Update the games turn information
+  updateInfo(data.game, data.team, data.overallScoreRed, data.overallScoreBlue)     // Update the games turn information
   updateTimerSlider(data.game, data.mode)          // Update the games timer slider
   updatePacks(data.game)                // Update the games pack information
   updatePlayerlist(data.players)        // Update the player list for the room
@@ -342,9 +344,11 @@ function wipeBoard(){
 }
 
 // Update the game info displayed to the client
-function updateInfo(game, team){
+function updateInfo(game, team, roomScoreRed, roomScoreBlue){
   scoreBlue.innerHTML = game.blue                         // Update the blue tiles left
   scoreRed.innerHTML = game.red                           // Update the red tiles left
+  overallScoreRed.innerHTML=roomScoreRed
+  overallScoreBlue.innerHTML=roomScoreBlue
   turnMessage.innerHTML = game.turn + "'s turn"           // Update the turn msg
   turnMessage.className = game.turn                       // Change color of turn msg
   if (game.over){                                         // Display winner
