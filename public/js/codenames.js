@@ -138,7 +138,7 @@ newGame.onclick = () => {
 clueDeclareButton.onclick = () => {
   socket.emit('declareClue', {word: clueWord.value, count: clueCount.value})
   clueWord.value = ''
-  clueCount.value = 1
+  clueCount.value = ''
   return false
 }
 // User Picks spymaster Role
@@ -370,7 +370,8 @@ function updateInfo(game, team, roomScoreRed, roomScoreBlue){
     clueDisplay.innerText = ''
   }
   else {
-    clueDisplay.innerText = game.clue.word + " (" + (game.clue.count === 'unlimited' ? '∞' : game.clue.count) + ")"
+    let clueCountView = game.clue.count === '' ? '' : (' ('+(game.clue.count === 'unlimited' ? '∞' : game.clue.count)+')')
+    clueDisplay.innerText = game.clue.word + clueCountView
   }
 }
 
@@ -495,12 +496,9 @@ function updateLog(log){
       logSpan.innerText = "Switched to " + logEntry.team + " team's turn"
     }
     else if (logEntry.event === 'declareClue'){
-      logSpan.innerText = (logEntry.team + ' team was given the clue "'
-                           + logEntry.clue.word + '" ('
-                           + (logEntry.clue.count === 'unlimited'
-                              ? '∞'
-                              : logEntry.clue.count)
-                           + ')')
+      let clueCountView = logEntry.clue.count === '' ? '' : (' ('+(logEntry.clue.count === 'unlimited' ? '∞' : logEntry.clue.count)+')')
+      logSpan.innerText = logEntry.team + ' team was given the clue "'
+                           + logEntry.clue.word + '"'+clueCountView
     }
     logDiv.prepend(logSpan)
   })
