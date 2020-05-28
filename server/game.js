@@ -139,6 +139,16 @@ class Game{
     return count
   }
 
+  // Sometimes multiple players from a team are clicking end turn simultaneously
+  // resulting into calling switchTurn() multiple times.
+  // To avoid this, before calling switchTurn(), checking whether turn has already switched to other team,
+  // if already switched then ignoring
+  callSwitchTurnIfValid(team){
+    if(team === this.turn){
+      this.switchTurn()
+    }
+  }
+
   // Reset the timer and swap the turn over to the other team
   switchTurn(){
     this.timer = this.timerAmount               // Reset timer
