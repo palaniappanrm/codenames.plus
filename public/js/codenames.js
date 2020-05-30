@@ -363,7 +363,7 @@ function updateInfo(game, team, roomScoreRed, roomScoreBlue){
   turnMessage.innerHTML = colorAndTypeToTextMap[game.turn] + "'s turn"           // Update the turn msg
   turnMessage.className = game.turn                       // Change color of turn msg
   if (game.over){                                         // Display winner
-    turnMessage.innerHTML = game.winner + " wins!"
+    turnMessage.innerHTML = colorAndTypeToTextMap[game.winner] + " wins!"
     turnMessage.className = game.winner
   }
   if (team !== game.turn) endTurn.disabled = true         // Disable end turn button for opposite team
