@@ -155,6 +155,7 @@ class Game{
     if (this.turn === 'blue') this.turn = 'red' // Swith turn
     else this.turn = 'blue'
     this.clue = null
+    this.log.push({ 'event': 'switchTurn', 'team': this.turn})
   }
 
   // 50% red turn, 50% blue turn
