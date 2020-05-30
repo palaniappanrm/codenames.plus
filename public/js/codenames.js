@@ -71,6 +71,12 @@ let turnMessage = document.getElementById('status')
 let timer = document.getElementById('timer')
 let clueDisplay = document.getElementById('clue-display')
 
+let colorAndTypeToTextMap = {"blue" : "green", "red" : "red", "neutral" : "neutral", "death" : "death"}
+
+window.onload = () => {
+  joinBlue.innerHTML = "Join " + colorAndTypeToTextMap["blue"]
+  joinRed.innerHTML = "Join " + colorAndTypeToTextMap["red"]
+}
 
 // init
 ////////////////////////////////////////////////////////////////////////////
@@ -354,7 +360,7 @@ function updateInfo(game, team, roomScoreRed, roomScoreBlue){
   scoreRed.innerHTML = game.red                           // Update the red tiles left
   overallScoreRed.innerHTML=roomScoreRed
   overallScoreBlue.innerHTML=roomScoreBlue
-  turnMessage.innerHTML = game.turn + "'s turn"           // Update the turn msg
+  turnMessage.innerHTML = colorAndTypeToTextMap[game.turn] + "'s turn"           // Update the turn msg
   turnMessage.className = game.turn                       // Change color of turn msg
   if (game.over){                                         // Display winner
     turnMessage.innerHTML = game.winner + " wins!"
@@ -486,18 +492,18 @@ function updateLog(log){
     let logSpan = document.createElement('span')
     logSpan.className = logEntry.event + " " + logEntry.team
     if (logEntry.event === 'flipTile'){
-      logSpan.innerText = (logEntry.team + " team flipped " + logEntry.word
-                           + " (" + logEntry.type + ")"
+      logSpan.innerText = (colorAndTypeToTextMap[logEntry.team] + " team flipped " + logEntry.word
+                           + " (" + colorAndTypeToTextMap[logEntry.type] + ")"
                            + (logEntry.type === 'death' ? " ending the game"
                               : logEntry.endedTurn ? " ending their turn"
                               : ""))
     }
     else if (logEntry.event === 'switchTurn'){
-      logSpan.innerText = "Switched to " + logEntry.team + " team's turn"
+      logSpan.innerText = "Switched to " + colorAndTypeToTextMap[logEntry.team] + " team's turn"
     }
     else if (logEntry.event === 'declareClue'){
       let clueCountView = logEntry.clue.count === '' ? '' : (' ('+(logEntry.clue.count === 'unlimited' ? '∞' : logEntry.clue.count)+')')
-      logSpan.innerText = logEntry.team + ' team was given the clue "'
+      logSpan.innerText = colorAndTypeToTextMap[logEntry.team] + ' team was given the clue "'
                            + logEntry.clue.word + '"'+clueCountView
     }
     logDiv.prepend(logSpan)

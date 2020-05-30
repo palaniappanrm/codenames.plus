@@ -4,11 +4,22 @@ Palette:
 Black: #323032
 Light-Black: #686c6d
 Blue: #11779F
+Light-Blue : rgb(168, 216, 235)
 Red: #B32728
+Light-Red : rgb(236, 170, 170)
+Green: #008000
+Light-Blue : rgb(168, 235, 216)
 White: #F8FDFF
 Grey: #D6D2C9
 
 */
+
+:root {
+  --blue-team-deep-color : #008000;
+  --blue-team-light-color : rgb(168, 235, 216);
+  --red-team-deep-color : #B32728;
+  --red-team-light-color : rgb(236, 170, 170);
+}
 
 
 @media(max-width: 1600px){
@@ -556,40 +567,42 @@ button {
 }
 
 #players #panel #join-red{
+  text-transform: capitalize;
   position: relative;
   width: 46%;
   margin: 2%;
-  border: 2px solid #B32728;
+  border: 2px solid var(--red-team-deep-color, #B32728);
   box-sizing: border-box;
   padding: 4px;
   float: left;
   font-size: 16px;
   
   color: #F8FDFF;
-  background: #B32728;
+  background: var(--red-team-deep-color, #B32728);
 }
 
 #players #panel #join-red:hover {
   background: #323032;
-  color: #B32728;
+  color: var(--red-team-deep-color, #B32728);
 }
 
 #players #panel #join-blue{
+  text-transform: capitalize;
   position: relative;
   width: 46%;
   margin: 2%;
-  border: 2px solid #11779F;
+  border: 2px solid var(--blue-team-deep-color, #11779F);
   box-sizing: border-box;
   padding: 4px;
   font-size: 16px;
 
   color: #F8FDFF;
-  background: #11779F;
+  background: var(--blue-team-deep-color, #11779F);
 }
 
 #players #panel #join-blue:hover {
   background: #323032;
-  color: #11779F;
+  color: var(--blue-team-deep-color, #11779F);
 }
 
 #players #panel #randomize-teams{
@@ -629,26 +642,26 @@ button {
   width: 50%;
   text-align: center;
   float: left;
-  color: #B32728;
+  color: var(--red-team-deep-color, #B32728);
 }
 
 #players #panel #overall-score-blue {
   width: 50%;
   text-align: center;
   float: left;
-  color: #11779F;
+  color: var(--blue-team-deep-color, #11779F);
 }
 
 #players #panel #red-team {
   width: 50%;
   float: left;
-  color: #B32728;
+  color: var(--red-team-deep-color, #B32728);
 }
 
 #players #panel #blue-team {
   width: 50%;
   text-align: center;
-  color: #11779F;
+  color: var(--blue-team-deep-color, #11779F);
 }
 
 #players #panel .guess-proposal {

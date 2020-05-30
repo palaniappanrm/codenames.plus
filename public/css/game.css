@@ -16,11 +16,11 @@
 }
 
 #info #score #score-red {
-  color: #B32728;
+  color: var(--red-team-deep-color, #B32728);
 }
 
 #info #score #score-blue {
-  color: #11779F;
+  color: var(--blue-team-deep-color, #11779F);
 }
 
 #info #turn {
@@ -37,11 +37,11 @@
 }
 
 #info .red {
-  color: #B32728 !important;
+  color: var(--red-team-deep-color, #B32728) !important;
 }
 
 #info .blue {
-  color: #11779F !important;
+  color: var(--blue-team-deep-color, #11779F) !important;
 }
 
 #info #clue-display {
@@ -140,15 +140,15 @@
 }
 
 #board .s.r {
-  color: #B32728;
-  background: rgb(236, 170, 170);
-  border-color: rgb(236, 170, 170);
+  color: var(--red-team-deep-color, #B32728);
+  background: var(--red-team-light-color, rgb(236, 170, 170));
+  border-color: var(--red-team-light-color, rgb(236, 170, 170));
 }
 
 #board .s.b {
-  color: #11779F;
-  background: rgb(168, 216, 235);
-  border-color: rgb(168, 216, 235);
+  color: var(--blue-team-deep-color, #11779F);
+  background: var(--blue-team-light-color, rgb(168, 216, 235));
+  border-color: var(--blue-team-light-color, rgb(168, 216, 235));
 }
 
 #board .s.d {
@@ -172,14 +172,14 @@
 }
 
 #board .flipped.r {
-  border-color: #B32728;
-  background: #B32728;
+  border-color: var(--red-team-deep-color, #B32728);
+  background: var(--red-team-deep-color, #B32728);
   color: #F8FDFF;
 }
 
 #board .flipped.b {
-  border-color: #11779F;
-  background: #11779F;
+  border-color: var(--blue-team-deep-color, #11779F);
+  background: var(--blue-team-deep-color, #11779F);
   color: #F8FDFF;
 }
 
@@ -276,11 +276,11 @@
 }
 
 #log .red {
-  color: #B32728;
+  color: var(--red-team-deep-color, #B32728);
 }
 
 #log .blue {
-  color: #11779F;
+  color: var(--blue-team-deep-color, #11779F);
 }
 
 #log .declareClue {
