@@ -444,7 +444,6 @@ body {
 }
 
 #join-game .join-input {
-  position: relative;
   display: block;
   width: 275px;
   margin: 0 auto;
