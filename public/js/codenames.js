@@ -29,6 +29,7 @@ let serverMessageWindow = document.getElementById('server-message')
 let serverMessage = document.getElementById('message')
 let overlay = document.getElementById('overlay')
 let logDiv = document.getElementById('log')
+let playerNameDiv = document.getElementById('player-name')
 // Buttons
 let leaveRoom = document.getElementById('leave-room')
 let joinRed = document.getElementById('join-red')
@@ -71,7 +72,7 @@ let turnMessage = document.getElementById('status')
 let timer = document.getElementById('timer')
 let clueDisplay = document.getElementById('clue-display')
 
-let colorAndTypeToTextMap = {"blue" : "green", "red" : "red", "neutral" : "neutral", "death" : "death"}
+let colorAndTypeToTextMap = {"blue" : "green", "red" : "red", "neutral" : "neutral", "death" : "death", "undecided" : "undecided"}
 
 window.onload = () => {
   joinBlue.innerHTML = "Join " + colorAndTypeToTextMap["blue"]
@@ -249,6 +250,7 @@ socket.on('joinResponse', (data) =>{        // Response to joining room
     joinDiv.style.display = 'none'
     gameDiv.style.display = 'block'
     joinErrorMessage.innerText = ''
+    playerNameDiv.innerText = data.playerName
     updateFragment();
   } else joinErrorMessage.innerText = data.msg
 })
@@ -258,6 +260,7 @@ socket.on('createResponse', (data) =>{      // Response to creating room
     joinDiv.style.display = 'none'
     gameDiv.style.display = 'block'
     joinErrorMessage.innerText = ''
+    playerNameDiv.innerText = data.playerName
     updateFragment();
   } else joinErrorMessage.innerText = data.msg
 })

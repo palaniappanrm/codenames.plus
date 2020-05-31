@@ -88,7 +88,7 @@
 }
 
 #clue-form #declare-clue {
-  width: 19%;
+  width: 24%;
 }
 
 #clue-form #declare-clue:hover {
@@ -129,6 +129,9 @@
   font-size: 25px;
   background: #F8FDFF;
   color: #323032;
+  vertical-align: top;
+  word-wrap: break-word;
+  line-height: 1.5;
 }
 
 #board .row .tile:hover{

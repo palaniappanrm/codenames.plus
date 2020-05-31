@@ -152,8 +152,8 @@ Grey: #D6D2C9
   #info #turn {
     float: none !important;
     font-size: 20px !important;
-    text-align: right !important;
-    margin-right: 110px !important;
+    text-align: center !important;
+    margin-right: 120px !important;
     width: auto !important;
   }
 
@@ -210,6 +210,11 @@ Grey: #D6D2C9
 
   #leave-room {
     right: 20px !important;
+    margin-top: 70px !important;
+  }
+
+  #player-name {
+    margin-left: 20px !important;
     margin-top: 70px !important;
   }
 
@@ -497,6 +502,17 @@ button {
   background: #323032;
   color: #F8FDFF;
   font-size: 16px;
+}
+
+#player-name {
+  position: absolute;
+  margin-left: 150px;
+  margin-top: 20px;
+  background: #323032;
+  color: #F8FDFF;
+  font-size: 20px;
+  font-weight: bold;
+  font-style: italic;
 }
 
 #leave-room:hover {

@@ -295,7 +295,7 @@ function createRoom(socket, data){
         let player = new Player(userName, roomName, socket)   // Create a new player
         ROOM_LIST[roomName].players[socket.id] = player       // Add player to room
         player.joinTeam()                                     // Distribute player to team
-        socket.emit('createResponse', {success:true, msg: ""})// Tell client creation was successful
+        socket.emit('createResponse', {success:true, msg: "", playerName:userName})// Tell client creation was successful
         gameUpdate(roomName)                                  // Update the game for everyone in this room
         logStats(socket.id + "(" + player.nickname + ") CREATED '" + ROOM_LIST[player.room].room + "'(" + Object.keys(ROOM_LIST[player.room].players).length + ")")
       }
@@ -326,7 +326,7 @@ function joinRoom(socket, data){
         let player = new Player(userName, roomName, socket)   // Create a new player
         ROOM_LIST[roomName].players[socket.id] = player       // Add player to room
         player.joinTeam()                                     // Distribute player to team
-        socket.emit('joinResponse', {success:true, msg:""})   // Tell client join was successful
+        socket.emit('joinResponse', {success:true, msg:"", playerName:userName})   // Tell client join was successful
         gameUpdate(roomName)                                  // Update the game for everyone in this room
         // Server Log
         logStats(socket.id + "(" + player.nickname + ") JOINED '" + ROOM_LIST[player.room].room + "'(" + Object.keys(ROOM_LIST[player.room].players).length + ")")
