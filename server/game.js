@@ -88,13 +88,14 @@ class Game{
   }
 
   // When called, will change a tiles state to flipped
-  flipTile(i,j){
+  flipTile(i,j, playerName){
     if (!this.board[i][j].flipped){
       let type = this.board[i][j].type // Find the type of tile (red/blue/neutral/death)
       let logEntry = { 'event': 'flipTile',
                        'team': this.turn,
                        'word': this.board[i][j].word,
                        'type': type,
+                       'playerName': playerName,
                        'endedTurn': false }
       this.board[i][j].flipped = true  // Flip tile
       if (type === 'death') { // If death was flipped, end the game and find winner
@@ -117,10 +118,10 @@ class Game{
   }
 
   // Attempt to declare clue. Returns false if this turn already has one.
-  declareClue(clue){
+  declareClue(clue, playerName){
     if (this.clue === null){
       this.clue = clue
-      this.log.push({ 'event': 'declareClue', 'team': this.turn, 'clue': clue })
+      this.log.push({ 'event': 'declareClue', 'team': this.turn, 'clue': clue, 'playerName': playerName})
       return true
     }
     else{

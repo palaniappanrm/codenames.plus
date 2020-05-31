@@ -492,7 +492,7 @@ function updateLog(log){
     let logSpan = document.createElement('span')
     logSpan.className = logEntry.event + " " + logEntry.team
     if (logEntry.event === 'flipTile'){
-      logSpan.innerText = (colorAndTypeToTextMap[logEntry.team] + " team flipped " + logEntry.word
+      logSpan.innerText = (logEntry.playerName + " from " + colorAndTypeToTextMap[logEntry.team] + " team flipped " + logEntry.word
                            + " (" + colorAndTypeToTextMap[logEntry.type] + ")"
                            + (logEntry.type === 'death' ? " ending the game"
                               : logEntry.endedTurn ? " ending their turn"
@@ -504,7 +504,7 @@ function updateLog(log){
     else if (logEntry.event === 'declareClue'){
       let clueCountView = logEntry.clue.count === '' ? '' : (' ('+(logEntry.clue.count === 'unlimited' ? '∞' : logEntry.clue.count)+')')
       logSpan.innerText = colorAndTypeToTextMap[logEntry.team] + ' team was given the clue "'
-                           + logEntry.clue.word + '"'+clueCountView
+                           + logEntry.clue.word + '"' + clueCountView + " by " + logEntry.playerName
     }
     logDiv.prepend(logSpan)
   })

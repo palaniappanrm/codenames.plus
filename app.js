@@ -465,39 +465,40 @@ function switchRole(socket, data){
 // Click tile function
 // Gets client and the tile they clicked and pushes that change to the rooms game
 function clickTile(socket, data){
-  if (!PLAYER_LIST[socket.id]) return // Prevent Crash
-  let room = PLAYER_LIST[socket.id].room  // Get the room that the client called from
+  let playerDetails = PLAYER_LIST[socket.id]
+  if (!playerDetails) return // Prevent Crash
+  let room = playerDetails.room  // Get the room that the client called from
+  let roomDetails = ROOM_LIST[room]
 
-  if (PLAYER_LIST[socket.id].team === ROOM_LIST[room].game.turn){ // If it was this players turn
-    if (!ROOM_LIST[room].game.over){  // If the game is not over
-      if (PLAYER_LIST[socket.id].role !== 'spymaster'){ // If the client isnt spymaster
+  if (playerDetails.team === roomDetails.game.turn){ // If it was this players turn
+    if (!roomDetails.game.over){  // If the game is not over
+      if (playerDetails.role !== 'spymaster'){ // If the client isnt spymaster
         var doFlip = true
-        if (ROOM_LIST[room].consensus === 'consensus'){
-          let guess = ROOM_LIST[room].game.board[data.i][data.j].word
+        if (roomDetails.consensus === 'consensus'){
+          let guess = roomDetails.game.board[data.i][data.j].word
           // If player already made this guess, then toggle to them not making any guess.
-          if (PLAYER_LIST[socket.id].guessProposal === guess){
-            PLAYER_LIST[socket.id].guessProposal = null
+          if (playerDetails.guessProposal === guess){
+            playerDetails.guessProposal = null
             gameUpdate(room)  // Update everyone in the room
             return
           }
-          PLAYER_LIST[socket.id].guessProposal = guess
-          var allAgree = true
-          for (let player in ROOM_LIST[room].players){
-            if (PLAYER_LIST[player].guessProposal !== guess && PLAYER_LIST[player].role !== 'spymaster' && PLAYER_LIST[player].team === ROOM_LIST[room].game.turn){
+          playerDetails.guessProposal = guess
+          for (let player in roomDetails.players){
+            if (PLAYER_LIST[player].guessProposal !== guess && PLAYER_LIST[player].role !== 'spymaster' && PLAYER_LIST[player].team === roomDetails.game.turn){
               doFlip = false
               break
             }
           }
         }
         if (doFlip){
-          ROOM_LIST[room].game.flipTile(data.i, data.j) // Send the flipped tile info to the game
+          roomDetails.game.flipTile(data.i, data.j, playerDetails.nickname) // Send the flipped tile info to the game
           clearGuessProsposals(room)
         }
-        if(ROOM_LIST[room].game.over){
-          if(ROOM_LIST[room].game.winner === 'red'){
-            ROOM_LIST[room].overallScoreRed=ROOM_LIST[room].overallScoreRed+1
-          }else if(ROOM_LIST[room].game.winner === 'blue'){
-            ROOM_LIST[room].overallScoreBlue=ROOM_LIST[room].overallScoreBlue+1
+        if(roomDetails.game.over){
+          if(roomDetails.game.winner === 'red'){
+            roomDetails.overallScoreRed=roomDetails.overallScoreRed+1
+          }else if(roomDetails.game.winner === 'blue'){
+            roomDetails.overallScoreBlue=roomDetails.overallScoreBlue+1
           }
         }
         gameUpdate(room)  // Update everyone in the room
@@ -516,7 +517,7 @@ function declareClue(socket, data){
   if (PLAYER_LIST[socket.id].team === game.turn){ // If it was this players turn
     if (!game.over){  // If the game is not over
       if (PLAYER_LIST[socket.id].role === 'spymaster'){ // If the client is spymaster
-        if (game.declareClue(data)){
+        if (game.declareClue(data, PLAYER_LIST[socket.id].nickname)){
           gameUpdate(room)  // Update everyone in the room
         }
       }
