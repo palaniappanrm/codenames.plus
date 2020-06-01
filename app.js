@@ -175,7 +175,7 @@ io.sockets.on('connection', function(socket){
   socket.on('randomizeTeams', () => {randomizeTeams(socket)})
 
   // New Game. Called when client starts a new game
-  socket.on('newGame', () =>{newGame(socket)})
+  socket.on('newGame', (data) =>{newGame(socket, data)})
 
   // Switch Role. Called when client switches to spymaster / guesser
   // Data: New role
@@ -408,19 +408,23 @@ function randomizeTeams(socket){
 
 // New game function
 // Gets client that requested the new game and instantiates a new game board for the room
-function newGame(socket){
+function newGame(socket, data){
   if (!PLAYER_LIST[socket.id]) return // Prevent Crash
   let room = PLAYER_LIST[socket.id].room  // Get the room that the client called from
-  ROOM_LIST[room].game.init();      // Make a new game for that room
+  if(ROOM_LIST[room].game.over || data.doubleConfirmed) { //Start new game if either the game is over or the clicker has double confirmed
+    ROOM_LIST[room].game.init();      // Make a new game for that room
 
-  // Make everyone in the room a guesser and tell their client the game is new
-  for(let player in ROOM_LIST[room].players){
-    PLAYER_LIST[player].role = 'guesser';
-    PLAYER_LIST[player].guessProposal = null;
-    SOCKET_LIST[player].emit('switchRoleResponse', {success:true, role:'guesser'})
-    SOCKET_LIST[player].emit('newGameResponse', {success:true})
+    // Make everyone in the room a guesser and tell their client the game is new
+    for (let player in ROOM_LIST[room].players) {
+      PLAYER_LIST[player].role = 'guesser';
+      PLAYER_LIST[player].guessProposal = null;
+      SOCKET_LIST[player].emit('switchRoleResponse', {success: true, role: 'guesser'})
+      SOCKET_LIST[player].emit('newGameResponse', {success: true})
+    }
+    gameUpdate(room) // Update everyone in the room
+  } else {
+    socket.emit('newGameResponse', {success: false})
   }
-  gameUpdate(room) // Update everyone in the room
 }
 
 // Switch role function

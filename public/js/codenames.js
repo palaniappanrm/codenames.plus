@@ -130,9 +130,9 @@ joinBlue.onclick = () => {
 randomizeTeams.onclick = () => {  
   socket.emit('randomizeTeams', {})
 }
-// User Starts New Game
-newGame.onclick = () => {         
-  socket.emit('newGame', {})
+// User trying to start New Game
+newGame.onclick = () => {
+    socket.emit('newGame', {doubleConfirmed: false})
 }
 clueDeclareButton.onclick = () => {
   socket.emit('declareClue', {word: clueWord.value, count: clueCount.value})
@@ -266,6 +266,8 @@ socket.on('timerUpdate', (data) => {        // Server update client timer
 socket.on('newGameResponse', (data) => {    // Response to New Game
   if (data.success){
     wipeBoard();
+  }else if (confirm("Are you sure you want to start a new game?")){
+    socket.emit('newGame', {doubleConfirmed: true})
   }
 })
 
