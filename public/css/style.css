@@ -763,3 +763,41 @@ button {
   position: relative;
   width: 250px;
 }
+
+#players #panel #color-scheme-red, #players #panel #color-scheme-blue{
+  width: 50%;
+  position: relative;
+  float: left;
+}
+
+.box{
+  width:20px;
+  height:20px;
+  margin: 2%;
+  box-sizing: border-box;
+  padding: 4px;
+}
+
+#players #panel #color-scheme-red #red-palette {
+  background: #B32728;
+  float: left;
+  border: 2px solid #B32728;
+}
+
+#players #panel #color-scheme-red #yellow-palette {
+  background:#FFBB00;
+  float: left;
+  border: 2px solid #FFBB00;
+}
+
+#players #panel #color-scheme-blue #blue-palette {
+  background: #11779F;
+  float: right;
+  border: 2px solid #11779F;
+}
+
+#players #panel #color-scheme-blue #green-palette {
+  background: #008000;
+  float: right;
+  border: 2px solid #008000;
+}

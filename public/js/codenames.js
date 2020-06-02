@@ -54,6 +54,7 @@ let buttonBasecards = document.getElementById('base-pack')
 let buttonDuetcards = document.getElementById('duet-pack')
 let buttonUndercovercards = document.getElementById('undercover-pack')
 let buttonNLSScards = document.getElementById('nlss-pack')
+let colorBoxes = document.getElementsByClassName('box')
 // Clue entry
 let clueWord = document.getElementById('clue-word')
 let clueCount = document.getElementById('clue-count')
@@ -71,11 +72,18 @@ let turnMessage = document.getElementById('status')
 let timer = document.getElementById('timer')
 let clueDisplay = document.getElementById('clue-display')
 
-let colorAndTypeToTextMap = {"blue" : "green", "red" : "red", "neutral" : "neutral", "death" : "death", "undecided" : "undecided"}
+let colorAndTypeToTextMap = {"blue" : "right", "red" : "left", "neutral" : "neutral", "death" : "death", "undecided" : "undecided"}
 
 window.onload = () => {
   joinBlue.innerHTML = "Join " + colorAndTypeToTextMap["blue"]
   joinRed.innerHTML = "Join " + colorAndTypeToTextMap["red"]
+  for(var i = 0; i < colorBoxes.length; i++) {
+    var colorBox = colorBoxes[i]
+    colorBox.onclick = (event) =>{
+      document.documentElement.style.setProperty(event.srcElement.getAttribute("data-deep-color-key"), event.srcElement.getAttribute("data-deep-color-val"))
+      document.documentElement.style.setProperty(event.srcElement.getAttribute("data-light-color-key"), event.srcElement.getAttribute("data-light-color-val"))
+    }
+  }
 }
 
 // init
