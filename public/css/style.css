@@ -28,12 +28,11 @@ Grey: #D6D2C9
 */
 
 :root {
-  --blue-team-deep-color : #4E77B6;
-  --blue-team-light-color : rgb(179, 227, 238);
-  --red-team-deep-color : #9ACD32;
-  --red-team-light-color : rgb(255,255,160);
+  --blue-team-deep-color : #11779F;
+  --blue-team-light-color : rgb(168, 216, 235);
+  --red-team-deep-color : #B32728;
+  --red-team-light-color : rgb(236, 170, 170);
 }
-
 
 @media(max-width: 1600px){
   #board .row .tile{
