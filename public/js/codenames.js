@@ -134,8 +134,10 @@ joinBlue.onclick = () => {
   })
 }
 // User Randomizes Team
-randomizeTeams.onclick = () => {  
-  socket.emit('randomizeTeams', {})
+randomizeTeams.onclick = () => {
+  if(confirm("Are you sure you want to randomize teams?")) {
+    socket.emit('randomizeTeams', {})
+  }
 }
 // User trying to start New Game
 newGame.onclick = () => {
