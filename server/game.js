@@ -153,7 +153,7 @@ class Game{
   // Reset the timer and swap the turn over to the other team
   switchTurn(){
     this.timer = this.timerAmount               // Reset timer
-    if (this.turn === 'blue') this.turn = 'red' // Swith turn
+    if (this.turn === 'blue') this.turn = 'red' // Switch turn
     else this.turn = 'blue'
     this.clue = null
     this.log.push({ 'event': 'switchTurn', 'team': this.turn})
@@ -167,7 +167,7 @@ class Game{
 
   // Randomly assigns a death tile and red / blue tiles
   initBoard(){
-    let changed = []              // Keep track of tiles that have been givin a type
+    let changed = []              // Keep track of tiles that have been giving a type
     let tile = this.randomTile()  // Temp tile object that has a random num (0-24) and a coordinate on the grid
     this.board[tile.i][tile.j].type = 'death' // Make the first selected tile a death
     changed.push(tile.num)        // Add the tiles random num (0-24) to the changed []
