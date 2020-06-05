@@ -80,6 +80,10 @@ class Room {
     this.consensus = 'single'
     this.overallScoreRed = 0
     this.overallScoreBlue = 0
+    this.redDeepColor = "#B32728"
+    this.blueDeepColor = "#11779F"
+    this.redLightColor = "rgb(236, 170, 170)"
+    this.blueLightColor = "rgb(168, 216, 235)"
     // Add room to room list
     ROOM_LIST[this.room] = this
   }
@@ -158,6 +162,7 @@ io.sockets.on('connection', function(socket){
   // Client Disconnect
   socket.on('disconnect', () => {socketDisconnect(socket)})
 
+  socket.on('colorChange', (data) => {changeColor(socket, data)})
 
   // GAME STUFF
   ////////////////////////////////////////////////////////////////////////////
@@ -377,6 +382,21 @@ function socketDisconnect(socket){
   logStats('DISCONNECT: ' + socket.id)
 }
 
+
+function changeColor(socket, data){
+  if (!PLAYER_LIST[socket.id]) return // Prevent Crash
+  let room = PLAYER_LIST[socket.id].room   // Get the room that the client called from
+  if(data.team === "blue"){
+    ROOM_LIST[room].blueDeepColor = data.deepColorVal
+    ROOM_LIST[room].blueLightColor = data.lightColorVal
+  }
+  else if(data.team === "red"){
+    ROOM_LIST[room].redDeepColor = data.deepColorVal
+    ROOM_LIST[room].redLightColor = data.lightColorVal
+  }
+  gameUpdate(room)
+}
+
 // Randomize Teams function
 // Will mix up the teams in the room that the client is in
 function randomizeTeams(socket){
@@ -546,7 +566,11 @@ function gameUpdate(room){
     overallScoreBlue:ROOM_LIST[room].overallScoreBlue,
     difficulty:ROOM_LIST[room].difficulty,
     mode:ROOM_LIST[room].mode,
-    consensus:ROOM_LIST[room].consensus
+    consensus:ROOM_LIST[room].consensus,
+    redDeepColor:ROOM_LIST[room].redDeepColor,
+    blueDeepColor:ROOM_LIST[room].blueDeepColor,
+    redLightColor:ROOM_LIST[room].redLightColor,
+    blueLightColor:ROOM_LIST[room].blueLightColor
   }
   for (let player in ROOM_LIST[room].players){ // For everyone in the passed room
     gameState.team = PLAYER_LIST[player].team  // Add specific clients team info

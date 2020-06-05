@@ -80,8 +80,11 @@ window.onload = () => {
   for(var i = 0; i < colorBoxes.length; i++) {
     var colorBox = colorBoxes[i]
     colorBox.onclick = (event) =>{
-      document.documentElement.style.setProperty(event.srcElement.getAttribute("data-deep-color-key"), event.srcElement.getAttribute("data-deep-color-val"))
-      document.documentElement.style.setProperty(event.srcElement.getAttribute("data-light-color-key"), event.srcElement.getAttribute("data-light-color-val"))
+      socket.emit('colorChange', {
+        team:event.srcElement.getAttribute("data-team"),
+        deepColorVal:event.srcElement.getAttribute("data-deep-color-val"),
+        lightColorVal:event.srcElement.getAttribute("data-light-color-val")
+      })
     }
   }
 }
@@ -339,6 +342,7 @@ socket.on('gameState', (data) =>{           // Response to gamestate update
   updateTimerSlider(data.game, data.mode)          // Update the games timer slider
   updatePacks(data.game)                // Update the games pack information
   updatePlayerlist(data.players)        // Update the player list for the room
+  updateTeamColors(data.redDeepColor, data.blueDeepColor, data.redLightColor, data.blueLightColor)
 
   proposals = []
   for (let i in data.players){
@@ -498,6 +502,13 @@ function updatePlayerlist(players){
       blueTeam.appendChild(li)
     }
   }
+}
+
+function updateTeamColors(redDeep, blueDeep, redLight, blueLight){
+  document.documentElement.style.setProperty("--red-team-deep-color", redDeep)
+  document.documentElement.style.setProperty("--blue-team-deep-color", blueDeep)
+  document.documentElement.style.setProperty("--red-team-light-color", redLight)
+  document.documentElement.style.setProperty("--blue-team-light-color", blueLight)
 }
 
 function updateLog(log){
