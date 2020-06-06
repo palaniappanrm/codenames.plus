@@ -16,8 +16,8 @@ Light-Red: rgb(236, 170, 170)
 Green: #2EA057
 Light-Green: rgb(168, 235, 216)
 
-Yellow: #FFBB00
-Light-Yellow: rgb(255,255,102)
+Yellow: #F9AB36
+Light-Yellow: rgb(255,255,150)
 
 AUS: #9ACD32
 Light-AUS: rgb(255,255,160)
@@ -776,28 +776,13 @@ button {
   margin: 2%;
   box-sizing: border-box;
   padding: 4px;
+  border: 2px solid;
 }
 
-#players #panel #color-scheme-red #red-palette {
-  background: #B32728;
+#players #panel #color-scheme-red > button {
   float: left;
-  border: 2px solid #B32728;
 }
 
-#players #panel #color-scheme-red #yellow-palette {
-  background:#FFBB00;
-  float: left;
-  border: 2px solid #FFBB00;
-}
-
-#players #panel #color-scheme-blue #blue-palette {
-  background: #11779F;
+#players #panel #color-scheme-blue > button {
   float: right;
-  border: 2px solid #11779F;
-}
-
-#players #panel #color-scheme-blue #green-palette {
-  background: #008000;
-  float: right;
-  border: 2px solid #008000;
 }
