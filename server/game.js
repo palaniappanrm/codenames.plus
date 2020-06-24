@@ -18,13 +18,13 @@ readline.createInterface({
     terminal: false
 }).on('line', (line) => {basewords.push(line)})
 
-// Load NLSS words into an array
-let nlsswords = []
-filename = './server/nlss-words.txt'
+// Load bengali words into an array
+let bengaliwords = []
+filename = './server/bengali-words.txt'
 readline.createInterface({
     input: fs.createReadStream(filename),
     terminal: false
-}).on('line', (line) => {nlsswords.push(line)})
+}).on('line', (line) => {bengaliwords.push(line)})
 
 // Load Duet words into an array
 let duetwords = []
@@ -52,7 +52,7 @@ class Game{
     this.base = false
     this.duet = false
     this.undercover = false
-    this.nlss = false
+    this.bengali = false
 
     this.init();
 
@@ -229,7 +229,7 @@ class Game{
     if (this.base) pool = pool.concat(basewords)
     if (this.duet) pool = pool.concat(duetwords)
     if (this.undercover) pool = pool.concat(undercoverwords)
-    if (this.nlss) pool = pool.concat(nlsswords)
+    if (this.bengali) pool = pool.concat(bengaliwords)
     this.words = pool
   }
 

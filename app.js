@@ -250,11 +250,11 @@ io.sockets.on('connection', function(socket){
       game.duet = !game.duet
     } else if (data.pack === 'undercover'){
       game.undercover = !game.undercover
-    } else if (data.pack === 'nlss'){
-      game.nlss = !game.nlss
+    } else if (data.pack === 'bengali'){
+      game.bengali = !game.bengali
     }
     // If all options are disabled, re-enable the hullor pack
-    if (!game.base && !game.duet && !game.undercover && !game.nlss && !game.hullor) game.hullor = true
+    if (!game.base && !game.duet && !game.undercover && !game.bengali && !game.hullor) game.hullor = true
 
     game.updateWordPool()
     gameUpdate(room)

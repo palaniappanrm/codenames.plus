@@ -53,7 +53,7 @@ let buttonHullorcards = document.getElementById('hullor-pack')
 let buttonBasecards = document.getElementById('base-pack')
 let buttonDuetcards = document.getElementById('duet-pack')
 let buttonUndercovercards = document.getElementById('undercover-pack')
-let buttonNLSScards = document.getElementById('nlss-pack')
+let buttonBengalicards = document.getElementById('bengali-pack')
 let colorBoxes = document.getElementsByClassName('box')
 // Clue entry
 let clueWord = document.getElementById('clue-word')
@@ -72,7 +72,7 @@ let turnMessage = document.getElementById('status')
 let timer = document.getElementById('timer')
 let clueDisplay = document.getElementById('clue-display')
 
-let colorAndTypeToTextMap = {"red" : "alpha", "blue" : "beta", "neutral" : "neutral", "death" : "death", "undecided" : "undecided"}
+let colorAndTypeToTextMap = {"red" : "akash", "blue" : "patal", "neutral" : "neutral", "death" : "death", "undecided" : "undecided"}
 
 window.onload = () => {
   joinBlue.innerHTML = "Join " + colorAndTypeToTextMap["blue"]
@@ -229,8 +229,8 @@ buttonUndercovercards.onclick = () => {
   socket.emit('changeCards', {pack:'undercover'})
 }
 // User Clicks card pack
-buttonNLSScards.onclick = () => {
-  socket.emit('changeCards', {pack:'nlss'})
+buttonBengalicards.onclick = () => {
+  socket.emit('changeCards', {pack:'bengali'})
 }
 
 // When the slider is changed
@@ -425,8 +425,8 @@ function updatePacks(game){
   else buttonDuetcards.className = ''
   if (game.undercover) buttonUndercovercards.className = 'enabled'
   else buttonUndercovercards.className = ''
-  if (game.nlss) buttonNLSScards.className = 'enabled'
-  else buttonNLSScards.className = ''
+  if (game.bengali) buttonBengalicards.className = 'enabled'
+  else buttonBengalicards.className = ''
   document.getElementById('word-pool').innerHTML = "Word Pool: " + game.words.length
 }
 
