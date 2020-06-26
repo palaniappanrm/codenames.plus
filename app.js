@@ -48,13 +48,14 @@ const Heroku = require('heroku-client')
 const heroku = new Heroku({ token:process.env.API_TOKEN})// DELETE requests
 
 // Daily Server Restart time
-// UTC 13:00:00 = 9AM EST
-let restartHour = 11//13 original
-let restartMinute = 0//0
+// UTC 01:30:00 = 7AM IST
+let doDailyRestart = false
+let restartHour = 1
+let restartMinute = 30
 let restartSecond = 5
 // restart warning time
-let restartWarningHour = 10//12 original
-let restartWarningMinute = 50//50
+let restartWarningHour = 1
+let restartWarningMinute = 20
 let restartWarningSecond = 2
 
 ////////////////////////////////////////////////////////////////////////////
@@ -603,16 +604,18 @@ function herokuRestartWarning(){
 
 // Every second, update the timer in the rooms that are on timed mode
 setInterval(()=>{
-  // Server Daily Restart Logic
-  let time = new Date()
-  // Warn clients of restart 10min in advance
-  if (time.getHours() === restartWarningHour &&
-      time.getMinutes() === restartWarningMinute &&
-      time.getSeconds() < restartWarningSecond) herokuRestartWarning()
-  // Restart server at specified time
-  if (time.getHours() === restartHour &&
-      time.getMinutes() === restartMinute &&
-      time.getSeconds() < restartSecond) herokuRestart()
+  if(doDailyRestart){
+    // Server Daily Restart Logic
+    let time = new Date()
+    // Warn clients of restart 10min in advance
+    if (time.getHours() === restartWarningHour &&
+        time.getMinutes() === restartWarningMinute &&
+        time.getSeconds() < restartWarningSecond) herokuRestartWarning()
+    // Restart server at specified time
+    if (time.getHours() === restartHour &&
+        time.getMinutes() === restartMinute &&
+        time.getSeconds() < restartSecond) herokuRestart()
+  }
 
   // AFK Logic
   for (let player in PLAYER_LIST){
