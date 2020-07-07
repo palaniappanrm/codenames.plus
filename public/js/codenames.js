@@ -72,7 +72,7 @@ let turnMessage = document.getElementById('status')
 let timer = document.getElementById('timer')
 let clueDisplay = document.getElementById('clue-display')
 
-let colorAndTypeToTextMap = {"red" : "akash", "blue" : "patal", "neutral" : "neutral", "death" : "death", "undecided" : "undecided"}
+let colorAndTypeToTextMap = {"red" : "fire", "blue" : "ice", "neutral" : "neutral", "death" : "death", "undecided" : "undecided"}
 
 window.onload = () => {
   joinBlue.innerHTML = "Join " + colorAndTypeToTextMap["blue"]
