@@ -278,6 +278,16 @@
   display: list-item;
 }
 
+#log .declareClue.red{
+  font-weight: bold;
+  color: var(--red-team-light-color, rgb(236, 170, 170)) !important;
+}
+
+#log .declareClue.blue{
+  font-weight: bold;
+  color: var(--blue-team-light-color, rgb(168, 216, 235)) !important;
+}
+
 #log .red {
   color: var(--red-team-deep-color, #B32728);
 }
@@ -286,6 +296,3 @@
   color: var(--blue-team-deep-color, #11779F);
 }
 
-#log .declareClue {
-  font-weight: bold;
-}

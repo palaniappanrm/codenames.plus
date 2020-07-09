@@ -109,7 +109,7 @@ class Game{
         logEntry.endedTurn = true
       }
       this.log.push(logEntry)
-      // Log the tile flip first, then log switching turns.
+      // Log the tile flip first, then switching turns.
       if (logEntry.endedTurn){
         this.switchTurn()
       }
@@ -147,6 +147,7 @@ class Game{
   callSwitchTurnIfValid(team){
     if(team === this.turn){
       this.switchTurn()
+      this.log.push({ 'event': 'switchTurn', 'team': this.turn})
     }
   }
 
@@ -156,7 +157,6 @@ class Game{
     if (this.turn === 'blue') this.turn = 'red' // Switch turn
     else this.turn = 'blue'
     this.clue = null
-    this.log.push({ 'event': 'switchTurn', 'team': this.turn})
   }
 
   // 50% red turn, 50% blue turn
