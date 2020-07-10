@@ -61,11 +61,11 @@
     <form>
       <div class='join-input'>
         <label for='join-nickname'>Nickname: </label>
-        <input id='join-nickname' type='text' maxlength="10"></input>
+        <input id='join-nickname' type='text' maxlength="10" autocomplete="off"></input>
       </div>
       <div class='join-input'>
         <label for='join-room'>Room: </label>
-        <input id='join-room' type='text' maxlength="10"></input>
+        <input id='join-room' type='text' maxlength="10" autocomplete="off"></input>
       </div>
       <div class='join-input'>
         <label for='join-password'>Password: </label>
@@ -78,6 +78,7 @@
   </div>
   <div id="game" style="display:none">
     <button id="leave-room">Leave Room</button>
+    <div id="player-name"></div>
     <div id='title'>
         <h1>Codenames</h1>
     </div>
@@ -93,16 +94,29 @@
               <ul id="red-team"></ul>
               <ul id="blue-team"></ul>
               <ul id="undefined-list"></ul>
+              <div id="color-scheme-red">
+                <button id="red-palette" class="box" style="background-color: #B32728; border-color: rgb(236, 170, 170)"
+                        data-team="red" data-deep-color-val="#B32728" data-light-color-val="rgb(236, 170, 170)"></button>
+                <button id="purple-palette" class="box" style="background-color: #AA69DD; border-color: rgb(216, 191, 216)"
+                        data-team="red" data-deep-color-val="#AA69DD" data-light-color-val="rgb(216, 191, 216)"></button>
+              </div>
+              <div id="color-scheme-blue">
+                <button id="blue-palette" class="box" style="background-color: #11779F; border-color: rgb(168, 216, 235)"
+                        data-team="blue" data-deep-color-val="#11779F" data-light-color-val="rgb(168, 216, 235)"></button>
+                <button id="green-palette" class="box" style="background-color: #008000; border-color: rgb(168, 235, 216)"
+                        data-team="blue" data-deep-color-val="#008000" data-light-color-val="rgb(168, 235, 216)"></button>
+              </div>
               <button id='randomize-teams'>Randomize Teams</button>
             </div>
           </div>
           <div id="card-packs">
             <h2>Card Packs</h2>
             <p id='word-pool'>Word Pool</p>
-            <button class='enabled' id="base-pack">Base Pack</button>
+            <button class="enabled" id="hullor-pack">Hullor Pack</button>
+            <button id="base-pack">Base Pack</button>
             <button id="duet-pack">Duet Pack</button>
             <button id="undercover-pack">Undercover Pack (NSFW)</button>
-            <button id="nlss-pack">NLSS Pack</button>
+            <button id="bengali-pack">Bengali Pack</button>
           </div>
           <div id="controls">
               <label id="timer-slider-label" for="timer">Timer Length</label>
@@ -117,10 +131,11 @@
         </div>
         <div id="clue-form">
           <form name="clue">
-            <input type="text" id="clue-word">
+            <input type="text" id="clue-word" autocomplete="off">
             <select id="clue-count">
+              <option value="" selected></option>
               <option value="0">0</option>
-              <option value="1" selected>1</option>
+              <option value="1">1</option>
               <option value="2">2</option>
               <option value="3">3</option>
               <option value="4">4</option>
@@ -181,7 +196,7 @@
             <button id='difficulty-hard'>Hard</button>
           </div>
           <div class='toggle'>
-              <button id="mode-casual"disabled>Casual</button>
+              <button id="mode-casual" disabled>Casual</button>
               <button id="mode-timed">Timed</button>
             </div>
           <div class='toggle'>
@@ -190,8 +205,9 @@
           </div>
           <button id='new-game'>New Game</button>
         </div>
-        <div id="log">
-        </div>
+      </div>
+      <div id="right">
+        <div id="log"></div>
       </div>
       <div id="space"></div>
     </div>

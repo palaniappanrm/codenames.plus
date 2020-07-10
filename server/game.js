@@ -2,6 +2,14 @@
 let fs = require('fs')
 let readline = require('readline')
 
+// Load Hullor words into an array
+let hullorwords = []
+filename = './server/hullor-words.txt'
+readline.createInterface({
+  input: fs.createReadStream(filename),
+  terminal: false
+}).on('line', (line) => {hullorwords.push(line)})
+
 // Load base words into an array
 let basewords = []
 var filename = './server/words.txt'
@@ -10,13 +18,13 @@ readline.createInterface({
     terminal: false
 }).on('line', (line) => {basewords.push(line)})
 
-// Load NLSS words into an array
-let nlsswords = []
-filename = './server/nlss-words.txt'
+// Load bengali words into an array
+let bengaliwords = []
+filename = './server/bengali-words.txt'
 readline.createInterface({
     input: fs.createReadStream(filename),
     terminal: false
-}).on('line', (line) => {nlsswords.push(line)})
+}).on('line', (line) => {bengaliwords.push(line)})
 
 // Load Duet words into an array
 let duetwords = []
@@ -39,11 +47,12 @@ class Game{
   constructor(){
     this.timerAmount = 61 // Default timer value
 
-    this.words = basewords  // Load default word pack
-    this.base = true
+    this.words = hullorwords  // Load hullor words as default word pack
+    this.hullor = true
+    this.base = false
     this.duet = false
     this.undercover = false
-    this.nlss = false
+    this.bengali = false
 
     this.init();
 
@@ -79,13 +88,14 @@ class Game{
   }
 
   // When called, will change a tiles state to flipped
-  flipTile(i,j){
+  flipTile(i,j, playerName){
     if (!this.board[i][j].flipped){
       let type = this.board[i][j].type // Find the type of tile (red/blue/neutral/death)
       let logEntry = { 'event': 'flipTile',
                        'team': this.turn,
                        'word': this.board[i][j].word,
                        'type': type,
+                       'playerName': playerName,
                        'endedTurn': false }
       this.board[i][j].flipped = true  // Flip tile
       if (type === 'death') { // If death was flipped, end the game and find winner
@@ -99,7 +109,7 @@ class Game{
         logEntry.endedTurn = true
       }
       this.log.push(logEntry)
-      // Log the tile flip first, then log switching turns.
+      // Log the tile flip first, then switching turns.
       if (logEntry.endedTurn){
         this.switchTurn()
       }
@@ -108,10 +118,10 @@ class Game{
   }
 
   // Attempt to declare clue. Returns false if this turn already has one.
-  declareClue(clue){
+  declareClue(clue, playerName){
     if (this.clue === null){
       this.clue = clue
-      this.log.push({ 'event': 'declareClue', 'team': this.turn, 'clue': clue })
+      this.log.push({ 'event': 'declareClue', 'team': this.turn, 'clue': clue, 'playerName': playerName})
       return true
     }
     else{
@@ -130,10 +140,21 @@ class Game{
     return count
   }
 
+  // Sometimes multiple players from a team are clicking end turn simultaneously
+  // resulting into calling switchTurn() multiple times.
+  // To avoid this, before calling switchTurn(), checking whether turn has already switched to other team,
+  // if already switched then ignoring
+  callSwitchTurnIfValid(team){
+    if(team === this.turn){
+      this.switchTurn()
+      this.log.push({ 'event': 'switchTurn', 'team': this.turn})
+    }
+  }
+
   // Reset the timer and swap the turn over to the other team
   switchTurn(){
     this.timer = this.timerAmount               // Reset timer
-    if (this.turn === 'blue') this.turn = 'red' // Swith turn
+    if (this.turn === 'blue') this.turn = 'red' // Switch turn
     else this.turn = 'blue'
     this.clue = null
   }
@@ -146,7 +167,7 @@ class Game{
 
   // Randomly assigns a death tile and red / blue tiles
   initBoard(){
-    let changed = []              // Keep track of tiles that have been givin a type
+    let changed = []              // Keep track of tiles that have been giving a type
     let tile = this.randomTile()  // Temp tile object that has a random num (0-24) and a coordinate on the grid
     this.board[tile.i][tile.j].type = 'death' // Make the first selected tile a death
     changed.push(tile.num)        // Add the tiles random num (0-24) to the changed []
@@ -204,10 +225,11 @@ class Game{
 
   updateWordPool(){
     let pool = []
+    if (this.hullor) pool = pool.concat(hullorwords)
     if (this.base) pool = pool.concat(basewords)
     if (this.duet) pool = pool.concat(duetwords)
     if (this.undercover) pool = pool.concat(undercoverwords)
-    if (this.nlss) pool = pool.concat(nlsswords)
+    if (this.bengali) pool = pool.concat(bengaliwords)
     this.words = pool
   }
 

@@ -1,6 +1,5 @@
 let socket = io({path: window.location.pathname + 'socket.io'}) // Connect to server
 
-
 // Sign In Page Elements
 ////////////////////////////////////////////////////////////////////////////
 // Divs
@@ -29,6 +28,7 @@ let serverMessageWindow = document.getElementById('server-message')
 let serverMessage = document.getElementById('message')
 let overlay = document.getElementById('overlay')
 let logDiv = document.getElementById('log')
+let playerNameDiv = document.getElementById('player-name')
 // Buttons
 let leaveRoom = document.getElementById('leave-room')
 let joinRed = document.getElementById('join-red')
@@ -49,10 +49,12 @@ let buttonConsensusConsensus = document.getElementById('consensus-consensus')
 let buttonAbout = document.getElementById('about-button')
 let buttonAfk = document.getElementById('not-afk')
 let buttonServerMessageOkay = document.getElementById('server-message-okay')
+let buttonHullorcards = document.getElementById('hullor-pack')
 let buttonBasecards = document.getElementById('base-pack')
 let buttonDuetcards = document.getElementById('duet-pack')
 let buttonUndercovercards = document.getElementById('undercover-pack')
-let buttonNLSScards = document.getElementById('nlss-pack')
+let buttonBengalicards = document.getElementById('bengali-pack')
+let colorBoxes = document.getElementsByClassName('box')
 // Clue entry
 let clueWord = document.getElementById('clue-word')
 let clueCount = document.getElementById('clue-count')
@@ -70,6 +72,22 @@ let turnMessage = document.getElementById('status')
 let timer = document.getElementById('timer')
 let clueDisplay = document.getElementById('clue-display')
 
+let colorAndTypeToTextMap = {"red" : "fire", "blue" : "ice", "neutral" : "neutral", "death" : "death", "undecided" : "undecided"}
+
+window.onload = () => {
+  joinBlue.innerHTML = "Join " + colorAndTypeToTextMap["blue"]
+  joinRed.innerHTML = "Join " + colorAndTypeToTextMap["red"]
+  for(var i = 0; i < colorBoxes.length; i++) {
+    var colorBox = colorBoxes[i]
+    colorBox.onclick = (event) =>{
+      socket.emit('colorChange', {
+        team:event.srcElement.getAttribute("data-team"),
+        deepColorVal:event.srcElement.getAttribute("data-deep-color-val"),
+        lightColorVal:event.srcElement.getAttribute("data-light-color-val")
+      })
+    }
+  }
+}
 
 // init
 ////////////////////////////////////////////////////////////////////////////
@@ -127,8 +145,10 @@ joinBlue.onclick = () => {
   })
 }
 // User Randomizes Team
-randomizeTeams.onclick = () => {  
-  socket.emit('randomizeTeams', {})
+randomizeTeams.onclick = () => {
+  if(confirm("Are you sure you want to randomize teams?")) {
+    socket.emit('randomizeTeams', {})
+  }
 }
 // User trying to start New Game
 newGame.onclick = () => {
@@ -137,7 +157,7 @@ newGame.onclick = () => {
 clueDeclareButton.onclick = () => {
   socket.emit('declareClue', {word: clueWord.value, count: clueCount.value})
   clueWord.value = ''
-  clueCount.value = 1
+  clueCount.value = ''
   return false
 }
 // User Picks spymaster Role
@@ -193,6 +213,10 @@ buttonAbout.onclick = () => {
   }
 }
 // User Clicks card pack
+buttonHullorcards.onclick = () => {
+  socket.emit('changeCards', {pack:'hullor'})
+}
+// User Clicks card pack
 buttonBasecards.onclick = () => {
   socket.emit('changeCards', {pack:'base'})
 }
@@ -205,8 +229,8 @@ buttonUndercovercards.onclick = () => {
   socket.emit('changeCards', {pack:'undercover'})
 }
 // User Clicks card pack
-buttonNLSScards.onclick = () => {
-  socket.emit('changeCards', {pack:'nlss'})
+buttonBengalicards.onclick = () => {
+  socket.emit('changeCards', {pack:'bengali'})
 }
 
 // When the slider is changed
@@ -238,6 +262,7 @@ socket.on('joinResponse', (data) =>{        // Response to joining room
     joinDiv.style.display = 'none'
     gameDiv.style.display = 'block'
     joinErrorMessage.innerText = ''
+    playerNameDiv.innerText = data.playerName
     updateFragment();
   } else joinErrorMessage.innerText = data.msg
 })
@@ -247,6 +272,7 @@ socket.on('createResponse', (data) =>{      // Response to creating room
     joinDiv.style.display = 'none'
     gameDiv.style.display = 'block'
     joinErrorMessage.innerText = ''
+    playerNameDiv.innerText = data.playerName
     updateFragment();
   } else joinErrorMessage.innerText = data.msg
 })
@@ -312,10 +338,11 @@ socket.on('gameState', (data) =>{           // Response to gamestate update
   }
   mode = data.mode                      // Update the clients game mode
   consensus = data.consensus            // Update the clients consensus mode
-  updateInfo(data.game, data.team, data.overallScoreRed, data.overallScoreBlue)     // Update the games turn information
+  updateInfo(data.game, data.team, data.overallScoreRed, data.overallScoreBlue)      // Update the games turn information
   updateTimerSlider(data.game, data.mode)          // Update the games timer slider
   updatePacks(data.game)                // Update the games pack information
   updatePlayerlist(data.players)        // Update the player list for the room
+  updateTeamColors(data.redDeepColor, data.blueDeepColor, data.redLightColor, data.blueLightColor)
 
   proposals = []
   for (let i in data.players){
@@ -351,10 +378,10 @@ function updateInfo(game, team, roomScoreRed, roomScoreBlue){
   scoreRed.innerHTML = game.red                           // Update the red tiles left
   overallScoreRed.innerHTML=roomScoreRed
   overallScoreBlue.innerHTML=roomScoreBlue
-  turnMessage.innerHTML = game.turn + "'s turn"           // Update the turn msg
+  turnMessage.innerHTML = colorAndTypeToTextMap[game.turn] + "'s turn"           // Update the turn msg
   turnMessage.className = game.turn                       // Change color of turn msg
   if (game.over){                                         // Display winner
-    turnMessage.innerHTML = game.winner + " wins!"
+    turnMessage.innerHTML = colorAndTypeToTextMap[game.winner] + " wins!"
     turnMessage.className = game.winner
   }
   if (team !== game.turn) endTurn.disabled = true         // Disable end turn button for opposite team
@@ -367,7 +394,8 @@ function updateInfo(game, team, roomScoreRed, roomScoreBlue){
     clueDisplay.innerText = ''
   }
   else {
-    clueDisplay.innerText = game.clue.word + " (" + (game.clue.count === 'unlimited' ? '∞' : game.clue.count) + ")"
+    let clueCountView = game.clue.count === '' ? '' : (' ('+(game.clue.count === 'unlimited' ? '∞' : game.clue.count)+')')
+    clueDisplay.innerText = game.clue.word + clueCountView
   }
 }
 
@@ -389,14 +417,16 @@ function updateTimerSlider(game, mode){
 
 // Update the pack toggle buttons
 function updatePacks(game){
+  if (game.hullor) buttonHullorcards.className = 'enabled'
+  else buttonHullorcards.className = ''
   if (game.base) buttonBasecards.className = 'enabled'
   else buttonBasecards.className = ''
   if (game.duet) buttonDuetcards.className = 'enabled'
   else buttonDuetcards.className = ''
   if (game.undercover) buttonUndercovercards.className = 'enabled'
   else buttonUndercovercards.className = ''
-  if (game.nlss) buttonNLSScards.className = 'enabled'
-  else buttonNLSScards.className = ''
+  if (game.bengali) buttonBengalicards.className = 'enabled'
+  else buttonBengalicards.className = ''
   document.getElementById('word-pool').innerHTML = "Word Pool: " + game.words.length
 }
 
@@ -474,28 +504,32 @@ function updatePlayerlist(players){
   }
 }
 
+function updateTeamColors(redDeep, blueDeep, redLight, blueLight){
+  document.documentElement.style.setProperty("--red-team-deep-color", redDeep)
+  document.documentElement.style.setProperty("--blue-team-deep-color", blueDeep)
+  document.documentElement.style.setProperty("--red-team-light-color", redLight)
+  document.documentElement.style.setProperty("--blue-team-light-color", blueLight)
+}
+
 function updateLog(log){
   logDiv.innerHTML = ''
   log.forEach(logEntry => {
     let logSpan = document.createElement('span')
     logSpan.className = logEntry.event + " " + logEntry.team
     if (logEntry.event === 'flipTile'){
-      logSpan.innerText = (logEntry.team + " team flipped " + logEntry.word
-                           + " (" + logEntry.type + ")"
+      logSpan.innerText = (logEntry.playerName + " from " + colorAndTypeToTextMap[logEntry.team] + " team flipped " + logEntry.word
+                           + " (" + colorAndTypeToTextMap[logEntry.type] + ")"
                            + (logEntry.type === 'death' ? " ending the game"
                               : logEntry.endedTurn ? " ending their turn"
                               : ""))
     }
     else if (logEntry.event === 'switchTurn'){
-      logSpan.innerText = "Switched to " + logEntry.team + " team's turn"
+      logSpan.innerText = "Switched to " + colorAndTypeToTextMap[logEntry.team] + " team's turn"
     }
     else if (logEntry.event === 'declareClue'){
-      logSpan.innerText = (logEntry.team + ' team was given the clue "'
-                           + logEntry.clue.word + '" ('
-                           + (logEntry.clue.count === 'unlimited'
-                              ? '∞'
-                              : logEntry.clue.count)
-                           + ')')
+      let clueCountView = logEntry.clue.count === '' ? '' : (' ('+(logEntry.clue.count === 'unlimited' ? '∞' : logEntry.clue.count)+')')
+      logSpan.innerText = colorAndTypeToTextMap[logEntry.team] + ' team was given the clue "'
+                           + logEntry.clue.word + '"' + clueCountView + " by " + logEntry.playerName
     }
     logDiv.prepend(logSpan)
   })

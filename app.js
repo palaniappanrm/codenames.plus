@@ -48,13 +48,14 @@ const Heroku = require('heroku-client')
 const heroku = new Heroku({ token:process.env.API_TOKEN})// DELETE requests
 
 // Daily Server Restart time
-// UTC 13:00:00 = 9AM EST
-let restartHour = 11//13 original
-let restartMinute = 0//0
+// UTC 01:30:00 = 7AM IST
+let doDailyRestart = false
+let restartHour = 1
+let restartMinute = 30
 let restartSecond = 5
 // restart warning time
-let restartWarningHour = 10//12 original
-let restartWarningMinute = 50//50
+let restartWarningHour = 1
+let restartWarningMinute = 20
 let restartWarningSecond = 2
 
 ////////////////////////////////////////////////////////////////////////////
@@ -80,6 +81,10 @@ class Room {
     this.consensus = 'single'
     this.overallScoreRed = 0
     this.overallScoreBlue = 0
+    this.redDeepColor = "#B32728"
+    this.blueDeepColor = "#11779F"
+    this.redLightColor = "rgb(236, 170, 170)"
+    this.blueLightColor = "rgb(168, 216, 235)"
     // Add room to room list
     ROOM_LIST[this.room] = this
   }
@@ -158,6 +163,7 @@ io.sockets.on('connection', function(socket){
   // Client Disconnect
   socket.on('disconnect', () => {socketDisconnect(socket)})
 
+  socket.on('colorChange', (data) => {changeColor(socket, data)})
 
   // GAME STUFF
   ////////////////////////////////////////////////////////////////////////////
@@ -213,8 +219,9 @@ io.sockets.on('connection', function(socket){
   // End Turn. Called when client ends teams turn
   socket.on('endTurn', () => {
     if (!PLAYER_LIST[socket.id]) return // Prevent Crash
-    let room = PLAYER_LIST[socket.id].room  // Get the room the client was in
-    ROOM_LIST[room].game.switchTurn()       // Switch the room's game's turn
+    let player = PLAYER_LIST[socket.id];
+    let room = player.room  // Get the room the client was in
+    ROOM_LIST[room].game.callSwitchTurnIfValid(player.team) // Switch the room's game's turn (if not switched already)
     clearGuessProsposals(room)
     gameUpdate(room)                        // Update the game for everyone in this room
   })
@@ -236,17 +243,19 @@ io.sockets.on('connection', function(socket){
     if (!PLAYER_LIST[socket.id]) return // Prevent Crash
     let room = PLAYER_LIST[socket.id].room  // Get the room the client was in
     let game = ROOM_LIST[room].game
-    if(data.pack === 'base'){               // Toggle packs in the game
+    if (data.pack === 'hullor') {             // Toggle packs in the game
+      game.hullor = !game.hullor
+    } else if(data.pack === 'base'){
       game.base = !game.base
     } else if (data.pack === 'duet'){
       game.duet = !game.duet
     } else if (data.pack === 'undercover'){
       game.undercover = !game.undercover
-    } else if (data.pack === 'nlss'){
-      game.nlss = !game.nlss
+    } else if (data.pack === 'bengali'){
+      game.bengali = !game.bengali
     }
-    // If all options are disabled, re-enable the base pack
-    if (!game.base && !game.duet && !game.undercover && !game.nlss) game.base = true
+    // If all options are disabled, re-enable the hullor pack
+    if (!game.base && !game.duet && !game.undercover && !game.bengali && !game.hullor) game.hullor = true
 
     game.updateWordPool()
     gameUpdate(room)
@@ -292,7 +301,7 @@ function createRoom(socket, data){
         let player = new Player(userName, roomName, socket)   // Create a new player
         ROOM_LIST[roomName].players[socket.id] = player       // Add player to room
         player.joinTeam()                                     // Distribute player to team
-        socket.emit('createResponse', {success:true, msg: ""})// Tell client creation was successful
+        socket.emit('createResponse', {success:true, msg: "", playerName:userName})// Tell client creation was successful
         gameUpdate(roomName)                                  // Update the game for everyone in this room
         logStats(socket.id + "(" + player.nickname + ") CREATED '" + ROOM_LIST[player.room].room + "'(" + Object.keys(ROOM_LIST[player.room].players).length + ")")
       }
@@ -323,7 +332,7 @@ function joinRoom(socket, data){
         let player = new Player(userName, roomName, socket)   // Create a new player
         ROOM_LIST[roomName].players[socket.id] = player       // Add player to room
         player.joinTeam()                                     // Distribute player to team
-        socket.emit('joinResponse', {success:true, msg:""})   // Tell client join was successful
+        socket.emit('joinResponse', {success:true, msg:"", playerName:userName})   // Tell client join was successful
         gameUpdate(roomName)                                  // Update the game for everyone in this room
         // Server Log
         logStats(socket.id + "(" + player.nickname + ") JOINED '" + ROOM_LIST[player.room].room + "'(" + Object.keys(ROOM_LIST[player.room].players).length + ")")
@@ -372,6 +381,21 @@ function socketDisconnect(socket){
   }
   // Server Log
   logStats('DISCONNECT: ' + socket.id)
+}
+
+
+function changeColor(socket, data){
+  if (!PLAYER_LIST[socket.id]) return // Prevent Crash
+  let room = PLAYER_LIST[socket.id].room   // Get the room that the client called from
+  if(data.team === "blue"){
+    ROOM_LIST[room].blueDeepColor = data.deepColorVal
+    ROOM_LIST[room].blueLightColor = data.lightColorVal
+  }
+  else if(data.team === "red"){
+    ROOM_LIST[room].redDeepColor = data.deepColorVal
+    ROOM_LIST[room].redLightColor = data.lightColorVal
+  }
+  gameUpdate(room)
 }
 
 // Randomize Teams function
@@ -466,36 +490,41 @@ function switchRole(socket, data){
 // Click tile function
 // Gets client and the tile they clicked and pushes that change to the rooms game
 function clickTile(socket, data){
-  if (!PLAYER_LIST[socket.id]) return // Prevent Crash
-  let room = PLAYER_LIST[socket.id].room  // Get the room that the client called from
+  let playerDetails = PLAYER_LIST[socket.id]
+  if (!playerDetails) return // Prevent Crash
+  let room = playerDetails.room  // Get the room that the client called from
+  let roomDetails = ROOM_LIST[room]
 
-  if (PLAYER_LIST[socket.id].team === ROOM_LIST[room].game.turn){ // If it was this players turn
-    if (!ROOM_LIST[room].game.over){  // If the game is not over
-      if (PLAYER_LIST[socket.id].role !== 'spymaster'){ // If the client isnt spymaster
+  if (playerDetails.team === roomDetails.game.turn){ // If it was this players turn
+    if (!roomDetails.game.over){  // If the game is not over
+      if (playerDetails.role !== 'spymaster'){ // If the client isnt spymaster
         var doFlip = true
-        if (ROOM_LIST[room].consensus === 'consensus'){
-          let guess = ROOM_LIST[room].game.board[data.i][data.j].word
+        if (roomDetails.consensus === 'consensus'){
+          let guess = roomDetails.game.board[data.i][data.j].word
           // If player already made this guess, then toggle to them not making any guess.
-          if (PLAYER_LIST[socket.id].guessProposal === guess){
-            PLAYER_LIST[socket.id].guessProposal = null
+          if (playerDetails.guessProposal === guess){
+            playerDetails.guessProposal = null
             gameUpdate(room)  // Update everyone in the room
             return
           }
-          PLAYER_LIST[socket.id].guessProposal = guess
-          var allAgree = true
-          for (let player in ROOM_LIST[room].players){
-            if (PLAYER_LIST[player].guessProposal !== guess && PLAYER_LIST[player].role !== 'spymaster' && PLAYER_LIST[player].team === ROOM_LIST[room].game.turn){
+          playerDetails.guessProposal = guess
+          for (let player in roomDetails.players){
+            if (PLAYER_LIST[player].guessProposal !== guess && PLAYER_LIST[player].role !== 'spymaster' && PLAYER_LIST[player].team === roomDetails.game.turn){
               doFlip = false
               break
             }
           }
         }
         if (doFlip){
-          ROOM_LIST[room].game.flipTile(data.i, data.j) // Send the flipped tile info to the game
+          roomDetails.game.flipTile(data.i, data.j, playerDetails.nickname) // Send the flipped tile info to the game
           clearGuessProsposals(room)
         }
-        if(ROOM_LIST[room].game.over){
-          updateOverallScores(room);
+        if(roomDetails.game.over){
+          if(roomDetails.game.winner === 'red'){
+            roomDetails.overallScoreRed=roomDetails.overallScoreRed+1
+          }else if(roomDetails.game.winner === 'blue'){
+            roomDetails.overallScoreBlue=roomDetails.overallScoreBlue+1
+          }
         }
         gameUpdate(room)  // Update everyone in the room
       }
@@ -513,7 +542,7 @@ function declareClue(socket, data){
   if (PLAYER_LIST[socket.id].team === game.turn){ // If it was this players turn
     if (!game.over){  // If the game is not over
       if (PLAYER_LIST[socket.id].role === 'spymaster'){ // If the client is spymaster
-        if (game.declareClue(data)){
+        if (game.declareClue(data, PLAYER_LIST[socket.id].nickname)){
           gameUpdate(room)  // Update everyone in the room
         }
       }
@@ -546,7 +575,11 @@ function gameUpdate(room){
     overallScoreBlue:ROOM_LIST[room].overallScoreBlue,
     difficulty:ROOM_LIST[room].difficulty,
     mode:ROOM_LIST[room].mode,
-    consensus:ROOM_LIST[room].consensus
+    consensus:ROOM_LIST[room].consensus,
+    redDeepColor:ROOM_LIST[room].redDeepColor,
+    blueDeepColor:ROOM_LIST[room].blueDeepColor,
+    redLightColor:ROOM_LIST[room].redLightColor,
+    blueLightColor:ROOM_LIST[room].blueLightColor
   }
   for (let player in ROOM_LIST[room].players){ // For everyone in the passed room
     gameState.team = PLAYER_LIST[player].team  // Add specific clients team info
@@ -579,16 +612,18 @@ function herokuRestartWarning(){
 
 // Every second, update the timer in the rooms that are on timed mode
 setInterval(()=>{
-  // Server Daily Restart Logic
-  let time = new Date()
-  // Warn clients of restart 10min in advance
-  if (time.getHours() === restartWarningHour &&
-      time.getMinutes() === restartWarningMinute &&
-      time.getSeconds() < restartWarningSecond) herokuRestartWarning()
-  // Restart server at specified time
-  if (time.getHours() === restartHour &&
-      time.getMinutes() === restartMinute &&
-      time.getSeconds() < restartSecond) herokuRestart()
+  if(doDailyRestart){
+    // Server Daily Restart Logic
+    let time = new Date()
+    // Warn clients of restart 10min in advance
+    if (time.getHours() === restartWarningHour &&
+        time.getMinutes() === restartWarningMinute &&
+        time.getSeconds() < restartWarningSecond) herokuRestartWarning()
+    // Restart server at specified time
+    if (time.getHours() === restartHour &&
+        time.getMinutes() === restartMinute &&
+        time.getSeconds() < restartSecond) herokuRestart()
+  }
 
   // AFK Logic
   for (let player in PLAYER_LIST){

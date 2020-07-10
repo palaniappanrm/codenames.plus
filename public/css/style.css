@@ -3,17 +3,40 @@ Palette:
 
 Black: #323032
 Light-Black: #686c6d
+
 Blue: #11779F
+Light-Blue: rgb(168, 216, 235)
+
+IND: #4E77B6
+Light-IND: rgb(179, 227, 238)
+
 Red: #B32728
+Light-Red: rgb(236, 170, 170)
+
+Green: #2EA057
+Light-Green: rgb(168, 235, 216)
+
+Yellow: #F9AB36
+Light-Yellow: rgb(255,255,150)
+
+AUS: #9ACD32
+Light-AUS: rgb(255,255,160)
+
 White: #F8FDFF
 Grey: #D6D2C9
 
 */
 
+:root {
+  --blue-team-deep-color : #2EA057;
+  --blue-team-light-color : rgb(168, 235, 216);
+  --red-team-deep-color : #B32728;
+  --red-team-light-color : rgb(236, 170, 170);
+}
 
 @media(max-width: 1600px){
   #board .row .tile{
-    height: 90px !important;
+    height: 70px !important;
     font-size: 18px;
   }
 
@@ -36,6 +59,11 @@ Grey: #D6D2C9
   }
 
   #left {
+    position: relative;
+    width: 950px !important;
+  }
+
+  #right {
     position: relative;
     width: 950px !important;
   }
@@ -80,6 +108,12 @@ Grey: #D6D2C9
   #left {
     float: none !important;
     margin: 40px 20px 0 !important;
+    width: auto !important;
+  }
+
+  #right {
+    float: none !important;
+    margin:  0 20px 40px !important;
     width: auto !important;
   }
 
@@ -130,8 +164,8 @@ Grey: #D6D2C9
   #info #turn {
     float: none !important;
     font-size: 20px !important;
-    text-align: right !important;
-    margin-right: 110px !important;
+    text-align: center !important;
+    margin-right: 120px !important;
     width: auto !important;
   }
 
@@ -152,7 +186,7 @@ Grey: #D6D2C9
     hyphens: auto;
     word-wrap: break-word;
     vertical-align: top;
-    height: 70px !important;
+    height: 50px !important;
   }
 
   #toggles {
@@ -188,6 +222,11 @@ Grey: #D6D2C9
 
   #leave-room {
     right: 20px !important;
+    margin-top: 70px !important;
+  }
+
+  #player-name {
+    margin-left: 20px !important;
     margin-top: 70px !important;
   }
 
@@ -417,7 +456,6 @@ body {
 }
 
 #join-game .join-input {
-  position: relative;
   display: block;
   width: 275px;
   margin: 0 auto;
@@ -477,6 +515,17 @@ button {
   font-size: 16px;
 }
 
+#player-name {
+  position: absolute;
+  margin-left: 150px;
+  margin-top: 20px;
+  background: #323032;
+  color: #F8FDFF;
+  font-size: 20px;
+  font-weight: bold;
+  font-style: italic;
+}
+
 #leave-room:hover {
   background: #686c6d;
 }
@@ -504,6 +553,14 @@ button {
   position: relative;
   width: 200px;
   margin-right: 50px;
+  margin-top: 95px;
+  float: left;
+}
+
+#right {
+  position: relative;
+  width: 200px;
+  margin-left: 50px;
   margin-top: 95px;
   float: left;
 }
@@ -537,40 +594,42 @@ button {
 }
 
 #players #panel #join-red{
+  text-transform: capitalize;
   position: relative;
   width: 46%;
   margin: 2%;
-  border: 2px solid #B32728;
+  border: 2px solid var(--red-team-deep-color, #B32728);
   box-sizing: border-box;
   padding: 4px;
   float: left;
   font-size: 16px;
-  
+  font-weight: bold;
   color: #F8FDFF;
-  background: #B32728;
+  background: var(--red-team-deep-color, #B32728);
 }
 
 #players #panel #join-red:hover {
   background: #323032;
-  color: #B32728;
+  color: var(--red-team-deep-color, #B32728);
 }
 
 #players #panel #join-blue{
+  text-transform: capitalize;
   position: relative;
   width: 46%;
   margin: 2%;
-  border: 2px solid #11779F;
+  border: 2px solid var(--blue-team-deep-color, #11779F);
   box-sizing: border-box;
   padding: 4px;
   font-size: 16px;
-
+  font-weight: bold;
   color: #F8FDFF;
-  background: #11779F;
+  background: var(--blue-team-deep-color, #11779F);
 }
 
 #players #panel #join-blue:hover {
   background: #323032;
-  color: #11779F;
+  color: var(--blue-team-deep-color, #11779F);
 }
 
 #players #panel #randomize-teams{
@@ -610,26 +669,26 @@ button {
   width: 50%;
   text-align: center;
   float: left;
-  color: #B32728;
+  color: var(--red-team-deep-color, #B32728);
 }
 
 #players #panel #overall-score-blue {
   width: 50%;
   text-align: center;
   float: left;
-  color: #11779F;
+  color: var(--blue-team-deep-color, #11779F);
 }
 
 #players #panel #red-team {
   width: 50%;
   float: left;
-  color: #B32728;
+  color: var(--red-team-deep-color, #B32728);
 }
 
 #players #panel #blue-team {
   width: 50%;
   text-align: center;
-  color: #11779F;
+  color: var(--blue-team-deep-color, #11779F);
 }
 
 #players #panel .guess-proposal {
@@ -703,4 +762,27 @@ button {
 #space {
   position: relative;
   width: 250px;
+}
+
+#players #panel #color-scheme-red, #players #panel #color-scheme-blue{
+  width: 50%;
+  position: relative;
+  float: left;
+}
+
+.box{
+  width:20px;
+  height:20px;
+  margin: 2%;
+  box-sizing: border-box;
+  padding: 4px;
+  border: 2px solid;
+}
+
+#players #panel #color-scheme-red > button {
+  float: left;
+}
+
+#players #panel #color-scheme-blue > button {
+  float: right;
 }
