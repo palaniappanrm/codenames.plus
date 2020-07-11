@@ -44,12 +44,17 @@ Grey: #D6D2C9
     width: 1300px !important;
   }
 
+  #right {
+    position: relative;
+    width: 950px !important;
+  }
+
   #space {
     width: 0px !important;
   }
 }
 
-@media(max-width: 1100px){
+@media(max-width: 1300px){
 
   #app {
     width: 950px !important;
@@ -59,11 +64,6 @@ Grey: #D6D2C9
   }
 
   #left {
-    position: relative;
-    width: 950px !important;
-  }
-
-  #right {
     position: relative;
     width: 950px !important;
   }
