@@ -518,17 +518,13 @@ function updatePalette(data){
   function addColor(team, palette, color) {
     const colorBox = document.createElement('button');
     colorBox.className = "box"
-    colorBox.style = "background-color: " + color.deep + "; border-color: " + color.light + ";"
+    colorBox.style = "background: linear-gradient(to right bottom, " + color.deep + " 50%, " + color.light + " 50%);"
     colorBox.setAttribute("data-team", team)
     colorBox.setAttribute("data-name", color.name)
-    colorBox.setAttribute("data-deep-color-val", color.deep)
-    colorBox.setAttribute("data-light-color-val", color.light)
     colorBox.onclick = (event) =>{
       socket.emit('colorChange', {
         team:event.srcElement.getAttribute("data-team"),
         name:event.srcElement.getAttribute("data-name"),
-        deepColorVal:event.srcElement.getAttribute("data-deep-color-val"),
-        lightColorVal:event.srcElement.getAttribute("data-light-color-val")
       })
     }
     palette.appendChild(colorBox)
