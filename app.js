@@ -197,11 +197,18 @@ io.sockets.on('connection', function(socket){
   // Data: New role
   socket.on('switchRole', (data) => {switchRole(socket, data)})
 
-  // Switch Difficulty. Called when spymaster switches to hard / normal
+  // Switch Difficulty. Called when player switches to hard / normal
   // Data: New difficulty
   socket.on('switchDifficulty', (data) => {
     if (!PLAYER_LIST[socket.id]) return // Prevent Crash
     let room = PLAYER_LIST[socket.id].room        // Get room the client was in
+    // If a spymaster has seen the answers, then difficulty should be fixed
+    for (let player in ROOM_LIST[room].players) {
+      const otherPlayer = PLAYER_LIST[player];
+      if (otherPlayer.role === 'spymaster') {
+        return
+      }
+    }
     ROOM_LIST[room].difficulty = data.difficulty  // Update the rooms difficulty
     gameUpdate(room)                              // Update the game for everyone in this room
   })

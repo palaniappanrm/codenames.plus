@@ -282,10 +282,6 @@
   color: #F8FDFF;
 }
 
-#toggles #player-difficulty {
-  display: none;
-}
-
 #log {
   clear: both;
 }

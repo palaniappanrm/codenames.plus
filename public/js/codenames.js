@@ -280,11 +280,9 @@ socket.on('switchRoleResponse', (data) =>{  // Response to Switching Role
     if (playerRole === 'guesser') {
       buttonRoleGuesser.disabled = true;
       buttonRoleSpymaster.disabled = false;
-      toggleDifficulty.style.display = "none"
     } else {
       buttonRoleGuesser.disabled = false;
       buttonRoleSpymaster.disabled = true;
-      toggleDifficulty.style.display = "block"
     }
     wipeBoard();
   }
