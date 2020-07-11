@@ -1,6 +1,19 @@
 
 ////////////////////////////////////////////////////////////////////////////
 
+// Load settings
+let settings = require('./settings.js')
+try {
+  let local_settings = require('./local_settings.js')
+  for (let key in local_settings) {
+    settings[key] = local_settings[key]
+  }
+}
+catch {
+  // No local settings file, use default settings.
+}
+console.log("Settings: " + JSON.stringify(settings))
+
 // Express
 let express = require('express')
 
@@ -9,9 +22,10 @@ let app = express()
 app.disable('x-powered-by');
 
 //Set up server
-let server = app.listen(process.env.PORT || 2000, listen);
+let server = app.listen(process.env.PORT || settings.port, listen);
 
-let requireHttps = (process.env.REQUIRE_HTTPS == "true");
+let requireHttps = (process.env.REQUIRE_HTTPS == "true"
+                    || settings.requireHttps);
 
 // Callback function confirming server start
 function listen(){
@@ -46,17 +60,6 @@ io.use(middleware)
 // Make API requests
 const Heroku = require('heroku-client')
 const heroku = new Heroku({ token:process.env.API_TOKEN})// DELETE requests
-
-// Daily Server Restart time
-// UTC 01:30:00 = 7AM IST
-let doDailyRestart = false
-let restartHour = 1
-let restartMinute = 30
-let restartSecond = 5
-// restart warning time
-let restartWarningHour = 1
-let restartWarningMinute = 20
-let restartWarningSecond = 2
 
 ////////////////////////////////////////////////////////////////////////////
 
@@ -612,17 +615,17 @@ function herokuRestartWarning(){
 
 // Every second, update the timer in the rooms that are on timed mode
 setInterval(()=>{
-  if(doDailyRestart){
+  if(settings.doDailyRestart){
     // Server Daily Restart Logic
     let time = new Date()
     // Warn clients of restart 10min in advance
-    if (time.getHours() === restartWarningHour &&
-        time.getMinutes() === restartWarningMinute &&
-        time.getSeconds() < restartWarningSecond) herokuRestartWarning()
+    if (time.getHours() === settings.restartWarningHour &&
+        time.getMinutes() === settings.restartWarningMinute &&
+        time.getSeconds() < settings.restartWarningSecond) herokuRestartWarning()
     // Restart server at specified time
-    if (time.getHours() === restartHour &&
-        time.getMinutes() === restartMinute &&
-        time.getSeconds() < restartSecond) herokuRestart()
+    if (time.getHours() === settings.restartHour &&
+        time.getMinutes() === settings.restartMinute &&
+        time.getSeconds() < settings.restartSecond) herokuRestart()
   }
 
   // AFK Logic
