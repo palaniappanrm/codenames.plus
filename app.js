@@ -592,7 +592,9 @@ function gameUpdate(room){
     redDeepColor: roomDetails.redDeepColor,
     blueDeepColor: roomDetails.blueDeepColor,
     redLightColor: roomDetails.redLightColor,
-    blueLightColor: roomDetails.blueLightColor
+    blueLightColor: roomDetails.blueLightColor,
+    redPalette: settings.redPalette,
+    bluePalette: settings.bluePalette,
   }
   for (let player in ROOM_LIST[room].players){ // For everyone in the passed room
     gameState.team = PLAYER_LIST[player].team  // Add specific clients team info

@@ -54,7 +54,6 @@ let buttonBasecards = document.getElementById('base-pack')
 let buttonDuetcards = document.getElementById('duet-pack')
 let buttonUndercovercards = document.getElementById('undercover-pack')
 let buttonBengalicards = document.getElementById('bengali-pack')
-let colorBoxes = document.getElementsByClassName('box')
 // Clue entry
 let clueWord = document.getElementById('clue-word')
 let clueCount = document.getElementById('clue-count')
@@ -73,22 +72,6 @@ let timer = document.getElementById('timer')
 let clueDisplay = document.getElementById('clue-display')
 
 let colorAndTypeToTextMap = {"red" : "fire", "blue" : "ice", "neutral" : "neutral", "death" : "death", "undecided" : "undecided"}
-
-window.onload = () => {
-  joinBlue.innerHTML = "Join " + colorAndTypeToTextMap["blue"]
-  joinRed.innerHTML = "Join " + colorAndTypeToTextMap["red"]
-  for(var i = 0; i < colorBoxes.length; i++) {
-    var colorBox = colorBoxes[i]
-    colorBox.onclick = (event) =>{
-      socket.emit('colorChange', {
-        team:event.srcElement.getAttribute("data-team"),
-        name:event.srcElement.getAttribute("data-name"),
-        deepColorVal:event.srcElement.getAttribute("data-deep-color-val"),
-        lightColorVal:event.srcElement.getAttribute("data-light-color-val")
-      })
-    }
-  }
-}
 
 // init
 ////////////////////////////////////////////////////////////////////////////
@@ -359,6 +342,8 @@ socket.on('gameState', (data) =>{           // Response to gamestate update
   // Update the board display
   updateBoard(data.game.board, proposals, data.game.over, data.game.turn)
   updateLog(data.game.log)
+
+  updatePalette(data);
 })
 
 
@@ -522,6 +507,37 @@ function updateTeamColors(data){
   document.documentElement.style.setProperty("--blue-team-deep-color", data.blueDeepColor)
   document.documentElement.style.setProperty("--red-team-light-color", data.redLightColor)
   document.documentElement.style.setProperty("--blue-team-light-color", data.blueLightColor)
+}
+
+function updatePalette(data){
+  const redPalette = document.getElementById("color-scheme-red");
+  const bluePalette = document.getElementById("color-scheme-blue");
+  if (redPalette.firstElementChild || bluePalette.firstElementChild) {
+    // Palette never changes, so only do this once.
+    return
+  }
+
+  function addColor(team, palette, color) {
+    const colorBox = document.createElement('button');
+    colorBox.className = "box"
+    colorBox.style = "background-color: " + color.deep + "; border-color: " + color.light + ";"
+    colorBox.setAttribute("data-team", team)
+    colorBox.setAttribute("data-name", color.name)
+    colorBox.setAttribute("data-deep-color-val", color.deep)
+    colorBox.setAttribute("data-light-color-val", color.light)
+    colorBox.onclick = (event) =>{
+      socket.emit('colorChange', {
+        team:event.srcElement.getAttribute("data-team"),
+        name:event.srcElement.getAttribute("data-name"),
+        deepColorVal:event.srcElement.getAttribute("data-deep-color-val"),
+        lightColorVal:event.srcElement.getAttribute("data-light-color-val")
+      })
+    }
+    palette.appendChild(colorBox)
+  }
+
+  data.redPalette.forEach(c => addColor("red", redPalette, c));
+  data.bluePalette.forEach(c => addColor("blue", bluePalette, c));
 }
 
 function updateLog(log){
