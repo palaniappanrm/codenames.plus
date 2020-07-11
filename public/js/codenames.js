@@ -524,7 +524,11 @@ function updateLog(log){
     let logSpan = document.createElement('span')
     logSpan.className = logEntry.event + " " + logEntry.team
     if (logEntry.event === 'flipTile'){
-      logSpan.innerText = (logEntry.playerName + " from " + colorAndTypeToTextMap[logEntry.team] + " team flipped " + logEntry.word
+      logSpan.innerText = ((consensus == 'single'
+                              ? logEntry.playerName + " from "
+                              : "")
+                           + colorAndTypeToTextMap[logEntry.team]
+                           + " team flipped " + logEntry.word
                            + " (" + colorAndTypeToTextMap[logEntry.type] + ")"
                            + (logEntry.type === 'death' ? " ending the game"
                               : logEntry.endedTurn ? " ending their turn"
