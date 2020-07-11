@@ -10,7 +10,19 @@ try {
   }
 }
 catch (e){
-  // No local settings file, use default settings.
+  console.log("No local settings file, use default settings", e)
+}
+try {
+  // Finally override/add if any key is specified in env config under codenames_settings key
+  // config format in env should be json parsable e.g:
+  // codenames_settings={"requireHttps" : false, "defaultCardPacks": ["Hullor Pack"], "redTeamName": "fire"}
+  let env_settings = process.env.codenames_settings ? JSON.parse(process.env.codenames_settings) : {}
+  for(let key in env_settings){
+    settings[key] = env_settings[key]
+  }
+}
+catch (e){
+  console.log("Error reading env settings", e)
 }
 console.log("Settings: " + JSON.stringify(settings))
 
