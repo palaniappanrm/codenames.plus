@@ -84,12 +84,14 @@ class Room {
     this.consensus = 'single'
     this.overallScoreRed = 0
     this.overallScoreBlue = 0
-    this.redTeamName = settings.redTeamName || "red"
-    this.blueTeamName = settings.blueTeamName || "blue"
-    this.redDeepColor = "#B32728"
-    this.blueDeepColor = "#11779F"
-    this.redLightColor = "rgb(236, 170, 170)"
-    this.blueLightColor = "rgb(168, 216, 235)"
+    const redColor = settings.redPalette[0]
+    const blueColor = settings.bluePalette[0]
+    this.redTeamName = settings.redTeamName || redColor.name
+    this.blueTeamName = settings.blueTeamName || blueColor.name
+    this.redDeepColor = redColor.deep
+    this.blueDeepColor = blueColor.deep
+    this.redLightColor = redColor.light
+    this.blueLightColor = blueColor.light
     // Add room to room list
     ROOM_LIST[this.room] = this
   }
