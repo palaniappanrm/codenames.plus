@@ -84,6 +84,8 @@ class Room {
     this.consensus = 'single'
     this.overallScoreRed = 0
     this.overallScoreBlue = 0
+    this.redTeamName = settings.redTeamName || "red"
+    this.blueTeamName = settings.blueTeamName || "blue"
     this.redDeepColor = "#B32728"
     this.blueDeepColor = "#11779F"
     this.redLightColor = "rgb(236, 170, 170)"
@@ -390,13 +392,18 @@ function socketDisconnect(socket){
 function changeColor(socket, data){
   if (!PLAYER_LIST[socket.id]) return // Prevent Crash
   let room = PLAYER_LIST[socket.id].room   // Get the room that the client called from
+  let roomDetails = ROOM_LIST[room]
   if(data.team === "blue"){
-    ROOM_LIST[room].blueDeepColor = data.deepColorVal
-    ROOM_LIST[room].blueLightColor = data.lightColorVal
+    if(roomDetails.redTeamName == data.name) return
+    roomDetails.blueTeamName = settings.blueTeamName || data.name
+    roomDetails.blueDeepColor = data.deepColorVal
+    roomDetails.blueLightColor = data.lightColorVal
   }
   else if(data.team === "red"){
-    ROOM_LIST[room].redDeepColor = data.deepColorVal
-    ROOM_LIST[room].redLightColor = data.lightColorVal
+    if(roomDetails.blueTeamName == data.name) return
+    roomDetails.redTeamName = settings.redTeamName || data.name
+    roomDetails.redDeepColor = data.deepColorVal
+    roomDetails.redLightColor = data.lightColorVal
   }
   gameUpdate(room)
 }
@@ -569,20 +576,23 @@ function updateOverallScores(room) {
 
 // Update the gamestate for every client in the room that is passed to this function
 function gameUpdate(room){
+  const roomDetails = ROOM_LIST[room]
   // Create data package to send to the client
   let gameState = {
     room: room,
-    players:ROOM_LIST[room].players,
-    game:ROOM_LIST[room].game,
-    overallScoreRed:ROOM_LIST[room].overallScoreRed,
-    overallScoreBlue:ROOM_LIST[room].overallScoreBlue,
-    difficulty:ROOM_LIST[room].difficulty,
-    mode:ROOM_LIST[room].mode,
-    consensus:ROOM_LIST[room].consensus,
-    redDeepColor:ROOM_LIST[room].redDeepColor,
-    blueDeepColor:ROOM_LIST[room].blueDeepColor,
-    redLightColor:ROOM_LIST[room].redLightColor,
-    blueLightColor:ROOM_LIST[room].blueLightColor
+    players: roomDetails.players,
+    game: roomDetails.game,
+    difficulty: roomDetails.difficulty,
+    mode: roomDetails.mode,
+    consensus: roomDetails.consensus,
+    redTeamName: roomDetails.redTeamName,
+    blueTeamName: roomDetails.blueTeamName,
+    overallScoreRed: roomDetails.overallScoreRed,
+    overallScoreBlue: roomDetails.overallScoreBlue,
+    redDeepColor: roomDetails.redDeepColor,
+    blueDeepColor: roomDetails.blueDeepColor,
+    redLightColor: roomDetails.redLightColor,
+    blueLightColor: roomDetails.blueLightColor
   }
   for (let player in ROOM_LIST[room].players){ // For everyone in the passed room
     gameState.team = PLAYER_LIST[player].team  // Add specific clients team info

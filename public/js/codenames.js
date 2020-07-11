@@ -82,6 +82,7 @@ window.onload = () => {
     colorBox.onclick = (event) =>{
       socket.emit('colorChange', {
         team:event.srcElement.getAttribute("data-team"),
+        name:event.srcElement.getAttribute("data-name"),
         deepColorVal:event.srcElement.getAttribute("data-deep-color-val"),
         lightColorVal:event.srcElement.getAttribute("data-light-color-val")
       })
@@ -332,6 +333,8 @@ socket.on('switchRoleResponse', (data) =>{  // Response to Switching Role
 })
 
 socket.on('gameState', (data) =>{           // Response to gamestate update
+  updateTeamColors(data);
+
   if (data.difficulty !== difficulty){  // Update the clients difficulty
     difficulty = data.difficulty
     wipeBoard();                        // Update the appearance of the tiles
@@ -342,7 +345,6 @@ socket.on('gameState', (data) =>{           // Response to gamestate update
   updateTimerSlider(data.game, data.mode)          // Update the games timer slider
   updatePacks(data.game)                // Update the games pack information
   updatePlayerlist(data.players)        // Update the player list for the room
-  updateTeamColors(data.redDeepColor, data.blueDeepColor, data.redLightColor, data.blueLightColor)
 
   proposals = []
   for (let i in data.players){
@@ -511,11 +513,15 @@ function updatePlayerlist(players){
   }
 }
 
-function updateTeamColors(redDeep, blueDeep, redLight, blueLight){
-  document.documentElement.style.setProperty("--red-team-deep-color", redDeep)
-  document.documentElement.style.setProperty("--blue-team-deep-color", blueDeep)
-  document.documentElement.style.setProperty("--red-team-light-color", redLight)
-  document.documentElement.style.setProperty("--blue-team-light-color", blueLight)
+function updateTeamColors(data){
+  colorAndTypeToTextMap["red"] = data.redTeamName
+  colorAndTypeToTextMap["blue"] = data.blueTeamName
+  joinRed.innerHTML = "Join " + colorAndTypeToTextMap["red"]
+  joinBlue.innerHTML = "Join " + colorAndTypeToTextMap["blue"]
+  document.documentElement.style.setProperty("--red-team-deep-color", data.redDeepColor)
+  document.documentElement.style.setProperty("--blue-team-deep-color", data.blueDeepColor)
+  document.documentElement.style.setProperty("--red-team-light-color", data.redLightColor)
+  document.documentElement.style.setProperty("--blue-team-light-color", data.blueLightColor)
 }
 
 function updateLog(log){

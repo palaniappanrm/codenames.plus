@@ -12,5 +12,8 @@ var config = module.exports = {
   restartWarningHour: 1,
   restartWarningMinute: 20,
   restartWarningSecond: 2,
-  
+
+  // Set to non-null to use fixed team names instead of using color names
+  redTeamName: null,
+  blueTeamName: null,
 }
