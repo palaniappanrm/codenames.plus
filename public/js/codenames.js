@@ -49,11 +49,6 @@ let buttonConsensusConsensus = document.getElementById('consensus-consensus')
 let buttonAbout = document.getElementById('about-button')
 let buttonAfk = document.getElementById('not-afk')
 let buttonServerMessageOkay = document.getElementById('server-message-okay')
-let buttonHullorcards = document.getElementById('hullor-pack')
-let buttonBasecards = document.getElementById('base-pack')
-let buttonDuetcards = document.getElementById('duet-pack')
-let buttonUndercovercards = document.getElementById('undercover-pack')
-let buttonBengalicards = document.getElementById('bengali-pack')
 // Clue entry
 let clueWord = document.getElementById('clue-word')
 let clueCount = document.getElementById('clue-count')
@@ -196,26 +191,6 @@ buttonAbout.onclick = () => {
     buttonAbout.className = 'above'
   }
 }
-// User Clicks card pack
-buttonHullorcards.onclick = () => {
-  socket.emit('changeCards', {pack:'hullor'})
-}
-// User Clicks card pack
-buttonBasecards.onclick = () => {
-  socket.emit('changeCards', {pack:'base'})
-}
-// User Clicks card pack
-buttonDuetcards.onclick = () => {
-  socket.emit('changeCards', {pack:'duet'})
-}
-// User Clicks card pack
-buttonUndercovercards.onclick = () => {
-  socket.emit('changeCards', {pack:'undercover'})
-}
-// User Clicks card pack
-buttonBengalicards.onclick = () => {
-  socket.emit('changeCards', {pack:'bengali'})
-}
 
 // When the slider is changed
 timerSlider.addEventListener("input", () =>{
@@ -317,6 +292,7 @@ socket.on('switchRoleResponse', (data) =>{  // Response to Switching Role
 
 socket.on('gameState', (data) =>{           // Response to gamestate update
   updateTeamColors(data);
+  updateCardPackButtons(data.availableCardPacks);
 
   if (data.difficulty !== difficulty){  // Update the clients difficulty
     difficulty = data.difficulty
@@ -404,18 +380,31 @@ function updateTimerSlider(game, mode){
   }
 }
 
+function updateCardPackButtons(availableCardPacks){
+  cardPacks = document.getElementById("card-packs")
+  // Card packs don't change, only have to do this once.
+  if(cardPacks.querySelectorAll("button").length > 0) return
+
+  availableCardPacks.forEach(name => {
+    const button = document.createElement('button')
+    button.innerText = name
+    button.onclick = e => {
+      socket.emit('changeCards', {pack:e.srcElement.innerText})
+    }
+    cardPacks.appendChild(button)
+  })
+}
+
 // Update the pack toggle buttons
 function updatePacks(game){
-  if (game.hullor) buttonHullorcards.className = 'enabled'
-  else buttonHullorcards.className = ''
-  if (game.base) buttonBasecards.className = 'enabled'
-  else buttonBasecards.className = ''
-  if (game.duet) buttonDuetcards.className = 'enabled'
-  else buttonDuetcards.className = ''
-  if (game.undercover) buttonUndercovercards.className = 'enabled'
-  else buttonUndercovercards.className = ''
-  if (game.bengali) buttonBengalicards.className = 'enabled'
-  else buttonBengalicards.className = ''
+  cardPacks = document.getElementById("card-packs")
+
+  cardPacks.querySelectorAll('button').forEach(button => {
+    button.className = (game.cardPackNames.includes(button.innerText)
+                          ? 'enabled'
+                          : '')
+  })
+
   document.getElementById('word-pool').innerHTML = "Word Pool: " + game.words.length
 }
 

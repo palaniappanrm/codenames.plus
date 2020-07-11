@@ -65,6 +65,9 @@ const heroku = new Heroku({ token:process.env.API_TOKEN})// DELETE requests
 
 // Codenames Game
 const Game = require('./server/game.js')
+settings.cardPacks.forEach(Game.loadCardPack)
+settings.additionalCardPacks.forEach(Game.loadCardPack)
+const cardPackNames = settings.cardPacks.concat(settings.additionalCardPacks).map(pack => pack.name)
 
 // Objects to keep track of sockets, rooms and players
 let SOCKET_LIST = {}
@@ -78,7 +81,7 @@ class Room {
     this.room = '' + name
     this.password = '' + pass
     this.players = {}
-    this.game = new Game()
+    this.game = new Game(settings.defaultCardPacks)
     this.difficulty = 'normal'
     this.mode = 'casual'
     this.consensus = 'single'
@@ -250,19 +253,17 @@ io.sockets.on('connection', function(socket){
     if (!PLAYER_LIST[socket.id]) return // Prevent Crash
     let room = PLAYER_LIST[socket.id].room  // Get the room the client was in
     let game = ROOM_LIST[room].game
-    if (data.pack === 'hullor') {             // Toggle packs in the game
-      game.hullor = !game.hullor
-    } else if(data.pack === 'base'){
-      game.base = !game.base
-    } else if (data.pack === 'duet'){
-      game.duet = !game.duet
-    } else if (data.pack === 'undercover'){
-      game.undercover = !game.undercover
-    } else if (data.pack === 'bengali'){
-      game.bengali = !game.bengali
+
+    const idx = game.cardPackNames.indexOf(data.pack)
+    if(idx > -1) {
+      game.cardPackNames.splice(idx, 1)
+    } else {
+      game.cardPackNames.push(data.pack)
     }
-    // If all options are disabled, re-enable the hullor pack
-    if (!game.base && !game.duet && !game.undercover && !game.bengali && !game.hullor) game.hullor = true
+    // If all options are disabled, re-enable the default packs
+    if (game.cardPackNames.length == 0) {
+      game.cardPackNames = [...settings.defaultCardPacks]
+    }
 
     game.updateWordPool()
     gameUpdate(room)
@@ -597,8 +598,9 @@ function gameUpdate(room){
     blueLightColor: roomDetails.blueLightColor,
     redPalette: settings.redPalette,
     bluePalette: settings.bluePalette,
+    availableCardPacks: cardPackNames,
   }
-  for (let player in ROOM_LIST[room].players){ // For everyone in the passed room
+  for (let player in roomDetails.players){ // For everyone in the passed room
     gameState.team = PLAYER_LIST[player].team  // Add specific clients team info
     SOCKET_LIST[player].emit('gameState', gameState)  // Pass data to the client
   }

@@ -2,57 +2,25 @@
 let fs = require('fs')
 let readline = require('readline')
 
-// Load Hullor words into an array
-let hullorwords = []
-filename = './server/hullor-words.txt'
-readline.createInterface({
-  input: fs.createReadStream(filename),
-  terminal: false
-}).on('line', (line) => {hullorwords.push(line)})
-
-// Load base words into an array
-let basewords = []
-var filename = './server/words.txt'
-readline.createInterface({
-    input: fs.createReadStream(filename),
-    terminal: false
-}).on('line', (line) => {basewords.push(line)})
-
-// Load bengali words into an array
-let bengaliwords = []
-filename = './server/bengali-words.txt'
-readline.createInterface({
-    input: fs.createReadStream(filename),
-    terminal: false
-}).on('line', (line) => {bengaliwords.push(line)})
-
-// Load Duet words into an array
-let duetwords = []
-filename = './server/duet-words.txt'
-readline.createInterface({
-    input: fs.createReadStream(filename),
-    terminal: false
-}).on('line', (line) => {duetwords.push(line)})
-
-// Load Undercover words into an array
-let undercoverwords = []
-filename = './server/undercover-words.txt'
-readline.createInterface({
-    input: fs.createReadStream(filename),
-    terminal: false
-}).on('line', (line) => {undercoverwords.push(line)})
+const cardPacks = {}
 
 // Codenames Game
 class Game{
-  constructor(){
+  static loadCardPack(cardPack) {
+    const words = []
+    cardPacks[cardPack.name] = words
+    readline.createInterface({
+      input: fs.createReadStream(cardPack.filename),
+      terminal: false
+    }).on('line', (line) => {words.push(line)})
+  }
+
+  constructor(cardPackNames){
     this.timerAmount = 61 // Default timer value
 
-    this.words = hullorwords  // Load hullor words as default word pack
-    this.hullor = true
-    this.base = false
-    this.duet = false
-    this.undercover = false
-    this.bengali = false
+    // Copy cardPackNames list
+    this.cardPackNames = [...cardPackNames]
+    this.updateWordPool()
 
     this.init();
 
@@ -131,6 +99,7 @@ class Game{
 
   // Find the count of the passed tile type
   findType(type){
+    if (!this.board) return 0
     let count = 0
     for (let i = 0; i < 5; i++){
       for (let j = 0; j < 5; j++){
@@ -196,6 +165,12 @@ class Game{
 
   // Create a new 5x5 board of random words
   newBoard(){
+    if (this.words.length < 25) {
+      console.log("Invalid word list. Only has "
+                   + this.words.length + " words.");
+      return
+    }
+
     this.randomTurn()   // Pick a new random turn
     this.board = new Array();  // Init the board to be a 2d array
     for (let i = 0; i < 5; i++) {this.board[i] = new Array()}
@@ -225,11 +200,7 @@ class Game{
 
   updateWordPool(){
     let pool = []
-    if (this.hullor) pool = pool.concat(hullorwords)
-    if (this.base) pool = pool.concat(basewords)
-    if (this.duet) pool = pool.concat(duetwords)
-    if (this.undercover) pool = pool.concat(undercoverwords)
-    if (this.bengali) pool = pool.concat(bengaliwords)
+    this.cardPackNames.forEach(name => pool = pool.concat(cardPacks[name]))
     this.words = pool
   }
 

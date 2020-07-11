@@ -25,4 +25,17 @@ var config = module.exports = {
     {name: "blue", deep: "#11779F", light: "rgb(168, 216, 235)"},
     {name: "green", deep: "#008000", light: "rgb(168, 235, 216)"},
   ],
+
+  defaultCardPacks: ["Base Pack"],
+  cardPacks: [
+    {name: "Base Pack", filename: "./server/words.txt"},
+    {name: "Duet Pack", filename: "./server/duet-words.txt"},
+    {name: "Undercover Pack (NSFW)", filename: "./server/undercover-words.txt"},
+    {name: "Hullor Pack", filename: "./server/hullor-words.txt"},
+    {name: "Bengali Pack", filename: "./server/bengali-words.txt"},
+  ],
+  // additionalCardPacks is appended to the cardPacks list. It's left
+  // blank here so it can be set in local_settings.js without overriding
+  // cardPacks.
+  additionalCardPacks: [],
 }
