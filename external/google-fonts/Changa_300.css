@@ -1,0 +1,16 @@
+@font-face {
+	font-family: 'Changa';
+	font-style: normal;
+	font-weight: 300;
+	src:
+		/* from https://fonts.gstatic.com/s/changa/v10/2-c79JNi2YuVOUcOarRPgnNGooxCZ_Oxcjfj9w.woff2 */
+		url('Changa_300.woff2') format('woff2'),
+		/* from https://fonts.gstatic.com/s/changa/v10/2-c79JNi2YuVOUcOarRPgnNGooxCZ_Oxcjfj8Q.woff */
+		url('Changa_300.woff') format('woff'),
+		/* from https://fonts.gstatic.com/s/changa/v10/2-c79JNi2YuVOUcOarRPgnNGooxCZ_Oxcjfj8w.eot */
+		url('Changa_300.eot?#iefix') format('embedded-opentype'),
+		/* from https://fonts.gstatic.com/l/font?kit=2-c79JNi2YuVOUcOarRPgnNGooxCZ_Oxcjfj8A&skey=11532a8d9d187679&v=v10#Changa */
+		url('Changa_300.svg#Changa') format('svg'),
+		/* from https://fonts.gstatic.com/s/changa/v10/2-c79JNi2YuVOUcOarRPgnNGooxCZ_Oxcjfj8g.ttf */
+		url('Changa_300.ttf') format('truetype');
+}
