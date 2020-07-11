@@ -423,15 +423,19 @@ function changeColor(socket, data){
   let roomDetails = ROOM_LIST[room]
   if(data.team === "blue"){
     if(roomDetails.redTeamName == data.name) return
+    const palette = settings.bluePalette.find(p => p.name === data.name)
+    if(!palette) return
     roomDetails.blueTeamName = settings.blueTeamName || data.name
-    roomDetails.blueDeepColor = data.deepColorVal
-    roomDetails.blueLightColor = data.lightColorVal
+    roomDetails.blueDeepColor = palette.deep
+    roomDetails.blueLightColor = palette.light
   }
   else if(data.team === "red"){
     if(roomDetails.blueTeamName == data.name) return
+    const palette = settings.redPalette.find(p => p.name === data.name)
+    if(!palette) return
     roomDetails.redTeamName = settings.redTeamName || data.name
-    roomDetails.redDeepColor = data.deepColorVal
-    roomDetails.redLightColor = data.lightColorVal
+    roomDetails.redDeepColor = palette.deep
+    roomDetails.redLightColor = palette.light
   }
   gameUpdate(room)
 }
