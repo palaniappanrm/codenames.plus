@@ -9,7 +9,7 @@ try {
     settings[key] = local_settings[key]
   }
 }
-catch {
+catch (e){
   // No local settings file, use default settings.
 }
 console.log("Settings: " + JSON.stringify(settings))
