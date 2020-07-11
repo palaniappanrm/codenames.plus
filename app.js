@@ -135,9 +135,21 @@ class Player {
 
   // When a player joins a room, evenly distribute them to a team
   joinTeam(){
-    let numInRoom = Object.keys(ROOM_LIST[this.room].players).length
-    if (numInRoom % 2 === 0) this.team = 'blue'
-    else this.team = 'red'
+    let numRed = 0
+    let numBlue = 0
+    for (let player in ROOM_LIST[this.room].players) {
+      const otherPlayerTeam = PLAYER_LIST[player].team;
+      if (otherPlayerTeam === 'red') {
+        numRed++
+      } else if (otherPlayerTeam === 'blue') {
+        numBlue++
+      }
+    }
+    if (numRed > numBlue) {
+      this.team = 'blue'
+    } else {
+      this.team = 'red'
+    }
   }
 }
 
@@ -184,6 +196,9 @@ io.sockets.on('connection', function(socket){
     if (!PLAYER_LIST[socket.id]) return // Prevent Crash
     let player = PLAYER_LIST[socket.id];  // Get player who made request
     player.team = data.team               // Update their team
+    if (!['red','blue'].includes(PLAYER_LIST[socket.id].team)) {
+      player.role = 'guesser'
+    }
     gameUpdate(player.room)               // Update the game for everyone in their room
   })
 
@@ -201,6 +216,7 @@ io.sockets.on('connection', function(socket){
   // Data: New difficulty
   socket.on('switchDifficulty', (data) => {
     if (!PLAYER_LIST[socket.id]) return // Prevent Crash
+    if (!['red','blue'].includes(PLAYER_LIST[socket.id].team)) return
     let room = PLAYER_LIST[socket.id].room        // Get room the client was in
     // If a spymaster has seen the answers, then difficulty should be fixed
     for (let player in ROOM_LIST[room].players) {
@@ -217,6 +233,7 @@ io.sockets.on('connection', function(socket){
   // Data: New mode
   socket.on('switchMode', (data) => {
     if (!PLAYER_LIST[socket.id]) return // Prevent Crash
+    if (!['red','blue'].includes(PLAYER_LIST[socket.id].team)) return
     let room = PLAYER_LIST[socket.id].room  // Get the room the client was in
     ROOM_LIST[room].mode = data.mode;       // Update the rooms game mode
     ROOM_LIST[room].game.timer = ROOM_LIST[room].game.timerAmount;   // Reset the timer in the room's game
@@ -227,6 +244,7 @@ io.sockets.on('connection', function(socket){
   // Data: New consensus mode
   socket.on('switchConsensus', (data) => {
     if (!PLAYER_LIST[socket.id]) return // Prevent Crash
+    if (!['red','blue'].includes(PLAYER_LIST[socket.id].team)) return
     let room = PLAYER_LIST[socket.id].room  // Get the room the client was in
     clearGuessProsposals(room)
     ROOM_LIST[room].consensus = data.consensus;       // Update the rooms consensus mode
@@ -428,7 +446,11 @@ function randomizeTeams(socket){
   let color = 0;    // Get a starting color
   if (Math.random() < 0.5) color = 1
 
-  let keys = Object.keys(players) // Get a list of players in the room from the dictionary
+  // Get a list of non-observer players in the room from the dictionary
+  let keys = []
+  for(let key in players) {
+    if(players[key].team !== 'observers') keys.push(key)
+  }
   let placed = []                 // Init a temp array to keep track of who has already moved
 
   while (placed.length < keys.length){
@@ -454,6 +476,7 @@ function randomizeTeams(socket){
 // Gets client that requested the new game and instantiates a new game board for the room
 function newGame(socket, data){
   if (!PLAYER_LIST[socket.id]) return // Prevent Crash
+  if (!['red','blue'].includes(PLAYER_LIST[socket.id].team)) return
   let room = PLAYER_LIST[socket.id].room  // Get the room that the client called from
   if(ROOM_LIST[room].game.over || data.doubleConfirmed) { //Start new game if either the game is over or the clicker has double confirmed
     ROOM_LIST[room].game.init();      // Make a new game for that room
@@ -478,7 +501,7 @@ function switchRole(socket, data){
   if (!currentPlayer) return // Prevent Crash
   let room = currentPlayer.room // Get the room that the client called from
 
-  if (currentPlayer.team === 'undecided'){
+  if (currentPlayer.team !== 'red' && currentPlayer.team !== 'blue'){
     // Dissallow the client a role switch if they're not on a team
     socket.emit('switchRoleResponse', {success:false})
     return

@@ -593,43 +593,49 @@ button {
   margin: 0;
 }
 
-#players #panel #join-red{
+#players #panel .join-team {
   text-transform: capitalize;
   position: relative;
   width: 46%;
   margin: 2%;
-  border: 2px solid var(--red-team-deep-color, #B32728);
   box-sizing: border-box;
   padding: 4px;
-  float: left;
   font-size: 16px;
   font-weight: bold;
   color: #F8FDFF;
+}
+#players #panel .join-team:hover {
+  background: #323032 !important;
+}
+
+#players #panel #join-red{
+  border: 2px solid var(--red-team-deep-color, #B32728);
   background: var(--red-team-deep-color, #B32728);
+  float: left;
 }
 
 #players #panel #join-red:hover {
-  background: #323032;
   color: var(--red-team-deep-color, #B32728);
 }
 
 #players #panel #join-blue{
-  text-transform: capitalize;
-  position: relative;
-  width: 46%;
-  margin: 2%;
   border: 2px solid var(--blue-team-deep-color, #11779F);
-  box-sizing: border-box;
-  padding: 4px;
-  font-size: 16px;
-  font-weight: bold;
-  color: #F8FDFF;
   background: var(--blue-team-deep-color, #11779F);
 }
 
 #players #panel #join-blue:hover {
-  background: #323032;
   color: var(--blue-team-deep-color, #11779F);
+}
+
+#players #panel #join-observers{
+  width: 96% !important;
+  border: 2px solid #DDDDDD;
+  background: #DDDDDD;
+  color: #222222;
+}
+
+#players #panel #join-observers:hover {
+  color: #DDDDDD;
 }
 
 #players #panel #randomize-teams{
@@ -689,6 +695,12 @@ button {
   width: 50%;
   text-align: center;
   color: var(--blue-team-deep-color, #11779F);
+}
+
+#players #panel #observers-list {
+  width: 100%;
+  text-align: center;
+  color: #222222;
 }
 
 #players #panel .guess-proposal {

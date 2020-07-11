@@ -33,6 +33,7 @@ let playerNameDiv = document.getElementById('player-name')
 let leaveRoom = document.getElementById('leave-room')
 let joinRed = document.getElementById('join-red')
 let joinBlue = document.getElementById('join-blue')
+let joinObservers = document.getElementById('join-observers')
 let randomizeTeams = document.getElementById('randomize-teams')
 let endTurn = document.getElementById('end-turn')
 let newGame = document.getElementById('new-game')
@@ -59,6 +60,7 @@ let timerSliderLabel = document.getElementById('timer-slider-label')
 let undefinedList = document.getElementById('undefined-list')
 let redTeam = document.getElementById('red-team')
 let blueTeam = document.getElementById('blue-team')
+let observersList = document.getElementById('observers-list')
 // UI Elements
 let scoreRed = document.getElementById('score-red')
 let scoreBlue = document.getElementById('score-blue')
@@ -128,6 +130,12 @@ randomizeTeams.onclick = () => {
   if(confirm("Are you sure you want to randomize teams?")) {
     socket.emit('randomizeTeams', {})
   }
+}
+// User Joins Observers
+joinObservers.onclick = () => {
+  socket.emit('joinTeam', {
+    team:'observers'
+  })
 }
 // User trying to start New Game
 newGame.onclick = () => {
@@ -462,6 +470,7 @@ function updatePlayerlist(players){
   undefinedList.innerHTML = ''
   redTeam.innerHTML = ''
   blueTeam.innerHTML = ''
+  observersList.innerHTML = ''
   for (let i in players){
     // Create a li element for each player
     let li = document.createElement('li');
@@ -481,6 +490,8 @@ function updatePlayerlist(players){
       redTeam.appendChild(li)
     } else if (players[i].team === 'blue'){
       blueTeam.appendChild(li)
+    } else if (players[i].team === 'observers'){
+      observersList.appendChild(li)
     }
   }
 }
