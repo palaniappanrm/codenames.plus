@@ -2,6 +2,8 @@ var config = module.exports = {
   port: 2000,
   requireHttps: false,
 
+  timeout: 2100, // # of seconds until kicked for afk (35min)
+
   // Daily Server Restart time
   // UTC 01:30:00 = 7AM IST
   doDailyRestart: false,
