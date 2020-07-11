@@ -194,10 +194,33 @@
 
 #board .tile.proposed {
   border-color: #cead00;
+  border-width: 0.5ex;
 }
 
 #board .tile.proposed:hover {
   border-color: #8a7400;
+}
+
+#board .tile.proposed .proposals {
+  position: absolute;
+  top: auto;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  text-align: center;
+  overflow: hidden;
+  width: 100%;
+  max-height: 100%;
+  font-size: 0.5em;
+  color: white;
+}
+
+#board .tile.proposed .proposals.red {
+  background-color: var(--red-team-light-color, rgb(236, 170, 170));
+}
+
+#board .tile.proposed .proposals.blue {
+  background-color: var(--blue-team-light-color, rgb(168, 216, 235));
 }
 
 
