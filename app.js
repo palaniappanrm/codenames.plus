@@ -730,6 +730,7 @@ setInterval(()=>{
 
       if (ROOM_LIST[room].game.timer < 0){  // If timer runs out, switch that rooms turn
         ROOM_LIST[room].game.switchTurn()
+        clearGuessProsposals(room)
         gameUpdate(room)   // Update everyone in the room
       }
 
