@@ -40,6 +40,10 @@ Grey: #D6D2C9
     font-size: 18px;
   }
 
+  #board .tile.proposed .proposals {
+    font-size: 0.5em !important;
+  }
+
   #content {
     width: 1300px !important;
   }
