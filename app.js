@@ -553,6 +553,8 @@ function clickTile(socket, data){
   if (!playerDetails) return // Prevent Crash
   let room = playerDetails.room  // Get the room that the client called from
   let roomDetails = ROOM_LIST[room]
+  // Ignore all clicks on tiles that have already been flipped.
+  if (roomDetails.game.board[data.i][data.j].flipped) return
 
   if (playerDetails.team === roomDetails.game.turn){ // If it was this players turn
     if (!roomDetails.game.over){  // If the game is not over
