@@ -68,7 +68,7 @@ let turnMessage = document.getElementById('status')
 let timer = document.getElementById('timer')
 let clueDisplay = document.getElementById('clue-display')
 
-let colorAndTypeToTextMap = {"red" : "fire", "blue" : "ice", "neutral" : "neutral", "death" : "death", "undecided" : "undecided"}
+let colorAndTypeToTextMap = {"red" : "red", "blue" : "blue", "neutral" : "neutral", "death" : "death", "undecided" : "undecided"}
 
 // init
 ////////////////////////////////////////////////////////////////////////////
@@ -387,7 +387,7 @@ function updateTimerSlider(game, mode){
 }
 
 function updateCardPackButtons(availableCardPacks){
-  cardPacks = document.getElementById("card-packs")
+  const cardPacks = document.getElementById("card-packs")
   // Card packs don't change, only have to do this once.
   if(cardPacks.querySelectorAll("button").length > 0) return
 
@@ -403,7 +403,7 @@ function updateCardPackButtons(availableCardPacks){
 
 // Update the pack toggle buttons
 function updatePacks(game){
-  cardPacks = document.getElementById("card-packs")
+  const cardPacks = document.getElementById("card-packs")
 
   cardPacks.querySelectorAll('button').forEach(button => {
     button.className = (game.cardPackNames.includes(button.innerText)
@@ -540,15 +540,11 @@ function updateLog(log){
     let logSpan = document.createElement('span')
     logSpan.className = logEntry.event + " " + logEntry.team
     if (logEntry.event === 'flipTile'){
-      logSpan.innerText = ((consensus == 'single'
-                              ? logEntry.playerName + " from "
-                              : "")
-                           + colorAndTypeToTextMap[logEntry.team]
-                           + " team flipped " + logEntry.word
-                           + " (" + colorAndTypeToTextMap[logEntry.type] + ")"
-                           + (logEntry.type === 'death' ? " ending the game"
-                              : logEntry.endedTurn ? " ending their turn"
-                              : ""))
+      logSpan.innerText = (consensus == 'single' ? logEntry.playerName + " from " : "")
+                            + colorAndTypeToTextMap[logEntry.team] + " team flipped "
+                            + logEntry.word
+                            + " (" + colorAndTypeToTextMap[logEntry.type] + ")"
+                            + (logEntry.type === 'death' ? " ending the game" : logEntry.endedTurn ? " ending their turn" : "")
     }
     else if (logEntry.event === 'switchTurn'){
       logSpan.innerText = "Switched to " + colorAndTypeToTextMap[logEntry.team] + " team's turn"
