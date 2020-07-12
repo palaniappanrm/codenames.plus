@@ -18,6 +18,7 @@ class Game{
   constructor(cardPackNames){
     this.timerAmount = 61 // Default timer value
 
+    this.allUsedWords = []
     // Copy cardPackNames list
     this.cardPackNames = [...cardPackNames]
     this.updateWordPool()
@@ -174,17 +175,22 @@ class Game{
     this.randomTurn()   // Pick a new random turn
     this.board = new Array();  // Init the board to be a 2d array
     for (let i = 0; i < 5; i++) {this.board[i] = new Array()}
-    let usedWords = [] // Keep track of used words
     let foundWord      // Temp var for a word out of the list
+
+    const usedSet = new Set(this.allUsedWords)
+    let unusedWords = this.words.filter(x => !usedSet.has(x))
+    // If out of words, reset the word list.
+    if (unusedWords.length < 25) {
+      unusedWords = [...this.words]
+      this.allUsedWords = []
+    }
 
     for (let i = 0; i < 5; i++){
       for (let j = 0; j < 5; j++){
-        foundWord = this.words[Math.floor(Math.random() * this.words.length)] // Pick a random word from the pool
-        // If the word is already on the board, pick another
-        while (usedWords.includes(foundWord)){  
-          foundWord = this.words[Math.floor(Math.random() * this.words.length)]
-        }
-        usedWords.push(foundWord) // Add the word to the used list
+        const idx = Math.floor(Math.random() * unusedWords.length)
+        foundWord = unusedWords[idx]
+        unusedWords.splice(idx, 1)
+        this.allUsedWords.push(foundWord) // Add the word to the used list
         this.board[i][j] = {      // Add the tile object to the board
           word:foundWord,
           flipped:false,
@@ -201,7 +207,8 @@ class Game{
   updateWordPool(){
     let pool = []
     this.cardPackNames.forEach(name => pool = pool.concat(cardPacks[name]))
-    this.words = pool
+    // Keep only unique words
+    this.words = [...new Set(pool)]
   }
 
   // Debugging purposes

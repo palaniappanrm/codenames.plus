@@ -411,7 +411,10 @@ function updatePacks(game){
                           : '')
   })
 
-  document.getElementById('word-pool').innerHTML = "Word Pool: " + game.words.length
+  const numWords = game.words.length
+  const usedSet = new Set(game.allUsedWords)
+  const wordsLeft = game.words.filter(x => !usedSet.has(x)).length
+  document.getElementById('word-pool').innerHTML = "Word Pool: " + wordsLeft + "/" + numWords
 }
 
 // Update the board
