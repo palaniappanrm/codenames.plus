@@ -554,11 +554,28 @@ function clickTile(socket, data){
   let room = playerDetails.room  // Get the room that the client called from
   let roomDetails = ROOM_LIST[room]
   // Ignore all clicks on tiles that have already been flipped.
-  if (roomDetails.game.board[data.i][data.j].flipped) return
+  const game = roomDetails.game
+  const tile = game.board[data.i][data.j]
+  if (tile.flipped) return
 
   if (playerDetails.team === roomDetails.game.turn){ // If it was this players turn
     if (!roomDetails.game.over){  // If the game is not over
-      if (playerDetails.role !== 'spymaster'){ // If the client isnt spymaster
+      if (playerDetails.role === 'spymaster'){
+        // Only allow setting clue words while choosing clue.
+        // And they must be correct answers.
+        if (game.clue === null && tile.type === playerDetails.team){
+          const word = tile.word
+          const idx = game.clueWords.indexOf(word)
+          if (idx > -1){
+            game.clueWords.splice(idx, 1)
+          } else {
+            game.clueWords.push(word)
+          }
+          const num = game.clueWords.length
+          socket.emit('clueCountValue', num == 0 ? '' : num)
+          gameUpdate(room, socket.id)  // Update just the spymaster
+        }
+      }else{ // If the client isnt spymaster
         var doFlip = true
         if (roomDetails.consensus === 'consensus'){
           let guess = roomDetails.game.board[data.i][data.j].word
@@ -626,7 +643,7 @@ function updateOverallScores(room) {
 }
 
 // Update the gamestate for every client in the room that is passed to this function
-function gameUpdate(room){
+function gameUpdate(room, toUpdate){
   const roomDetails = ROOM_LIST[room]
   // Create data package to send to the client
   let gameState = {
@@ -649,8 +666,10 @@ function gameUpdate(room){
     availableCardPacks: cardPackNames,
   }
   for (let player in roomDetails.players){ // For everyone in the passed room
-    gameState.team = PLAYER_LIST[player].team  // Add specific clients team info
-    SOCKET_LIST[player].emit('gameState', gameState)  // Pass data to the client
+    if (!toUpdate || toUpdate.includes(player)) {
+      gameState.team = PLAYER_LIST[player].team  // Add specific clients team info
+      SOCKET_LIST[player].emit('gameState', gameState)  // Pass data to the client
+    }
   }
 }
 

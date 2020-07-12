@@ -296,6 +296,10 @@ socket.on('switchRoleResponse', (data) =>{  // Response to Switching Role
   }
 })
 
+socket.on('clueCountValue', (data) => {
+  clueCount.value = data
+})
+
 socket.on('gameState', (data) =>{           // Response to gamestate update
   updateTeamColors(data);
   updateCardPackButtons(data.availableCardPacks);
@@ -322,8 +326,8 @@ socket.on('gameState', (data) =>{           // Response to gamestate update
   }
 
   // Update the board display
-  updateBoard(data.game.board, proposals, data.game.over, data.game.turn)
-  updateLog(data.game.log)
+  updateBoard(data.game.board, proposals, data.game.over, data.game.turn, data.team, data.game.clueWords)
+  updateLog(data.game.log, data.team, data.game.over)
 
   updatePalette(data);
 })
@@ -418,7 +422,7 @@ function updatePacks(game){
 }
 
 // Update the board
-function updateBoard(board, proposals, gameOver, turn){
+function updateBoard(board, proposals, gameOver, turn, team, clueWords){
   // Add description classes to each tile depending on the tiles color
   for (let x = 0; x < 5; x++){
     let row = document.getElementById('row-' + (x+1))
@@ -426,18 +430,38 @@ function updateBoard(board, proposals, gameOver, turn){
       let button = row.children[y]
       button.innerHTML = board[x][y].word
       button.className = "tile"
-      if (board[x][y].type === 'red') button.className += " r"    // Red tile
-      if (board[x][y].type === 'blue') button.className += " b"   // Blue tile
-      if (board[x][y].type === 'neutral') button.className += " n"// Neutral tile
-      if (board[x][y].type === 'death') button.className += " d"  // Death tile
-      if (board[x][y].flipped) button.className += " flipped"     // Flipped tile
-      if (board[x][y].word in proposals) { button.className += " proposed" // proposed guess
+      const tile = board[x][y]
+      if (tile.type === 'red') button.className += " r"    // Red tile
+      if (tile.type === 'blue') button.className += " b"   // Blue tile
+      if (tile.type === 'neutral') button.className += " n"// Neutral tile
+      if (tile.type === 'death') button.className += " d"  // Death tile
+      if (tile.flipped) button.className += " flipped"     // Flipped tile
+      if (tile.word in proposals) { button.className += " proposed" // proposed guess
         let span = document.createElement('span')
-        span.innerText = '🤔'.repeat(proposals[board[x][y].word])
-        span.className = 'proposals '  + turn
+        span.innerText = '🤔'.repeat(proposals[tile.word])
+        span.className = 'tileOverlay proposals ' + turn
         button.appendChild(span)
       }
-      if (playerRole === 'spymaster' || gameOver) button.className += " s"    // Flag all tiles if the client is a spy master
+      if (playerRole === 'spymaster' || gameOver) {
+        button.className += " s"    // Flag all tiles if the client is a spy master
+        // show clues associated with tile
+        if (tile.type === team || gameOver) {
+          if (tile.clues && tile.clues.length > 0) {
+            const clues = tile.clues.map(c => '"' + c.word + '"' +
+              (c.count === ''
+                ? ''
+                : (' ('+(c.count === 'unlimited' ? '∞' : c.count)+')')))
+            let span = document.createElement('span')
+            span.innerText = tile.clues.map(c => c.word).join(", ")
+            span.title = clues.join("\n")
+            span.className = 'tileOverlay clues'
+            button.appendChild(span)
+          }
+        }
+      }
+      if (playerRole === 'spymaster' && turn === team) {
+        if (clueWords.includes(tile.word)) button.className += " clueWord"
+      }
       if (difficulty === 'hard') button.className += " h"         // Flag all tiles if game is in hard mode
     }
   }
@@ -537,7 +561,7 @@ function updatePalette(data){
   data.bluePalette.forEach(c => addColor("blue", bluePalette, c));
 }
 
-function updateLog(log){
+function updateLog(log, team, over){
   logDiv.innerHTML = ''
   log.forEach(logEntry => {
     let logSpan = document.createElement('span')
@@ -556,6 +580,10 @@ function updateLog(log){
       let clueCountView = logEntry.clue.count === '' ? '' : (' ('+(logEntry.clue.count === 'unlimited' ? '∞' : logEntry.clue.count)+')')
       logSpan.innerText = colorAndTypeToTextMap[logEntry.team] + ' team was given the clue "'
                            + logEntry.clue.word + '"' + clueCountView + " by " + logEntry.playerName
+        + (logEntry.words.length > 0
+            && (over || playerRole === 'spymaster' && logEntry.team === team)
+           ? ' for ' + logEntry.words.map(w => '"' + w + '"').join(", ")
+           : '')
     }
     logDiv.prepend(logSpan)
   })

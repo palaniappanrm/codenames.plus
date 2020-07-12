@@ -39,6 +39,7 @@ class Game{
     this.newBoard()   // Populate the board
     this.log = []     // Initialize empty log
     this.clue = null
+    this.clueWords = []
   }
 
   // Check the number of unflipped team tiles and determine if someone won
@@ -90,7 +91,18 @@ class Game{
   declareClue(clue, playerName){
     if (this.clue === null){
       this.clue = clue
-      this.log.push({ 'event': 'declareClue', 'team': this.turn, 'clue': clue, 'playerName': playerName})
+      this.log.push({ 'event': 'declareClue', 'team': this.turn, 'clue': clue, 'playerName': playerName, 'words': this.clueWords})
+      this.clueWords.forEach(word => {
+        for (let i = 0; i < 5; i++){
+          for (let j = 0; j < 5; j++){
+            if (this.board[i][j].word === word){
+              if (!this.board[i][j].clues) this.board[i][j].clues = []
+              this.board[i][j].clues.push(clue)
+            }
+          }
+        }
+      })
+      this.clueWords = []
       return true
     }
     else{
@@ -127,6 +139,7 @@ class Game{
     if (this.turn === 'blue') this.turn = 'red' // Switch turn
     else this.turn = 'blue'
     this.clue = null
+    this.clueWords = []
   }
 
   // 50% red turn, 50% blue turn

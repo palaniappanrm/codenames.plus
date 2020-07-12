@@ -192,6 +192,30 @@
   color: #F8FDFF;
 }
 
+#board .tile.s.clueWord {
+  border-color: #808000;
+  border-width: 0.5ex;
+}
+
+#board .tile.s.clueWord:hover {
+  border-color: #f0f000;
+}
+
+#board .tile .clues {
+  top: 0;
+  bottom: auto;
+}
+
+#board .tile.b .clues {
+  background: var(--blue-team-deep-color, #11779F);
+  color: var(--blue-team-light-color, rgb(168, 216, 235));
+}
+
+#board .tile.r .clues {
+  background: var(--red-team-deep-color, #B32728);
+  color: var(--red-team-light-color, rgb(236, 170, 170));
+}
+
 #board .tile.proposed {
   border-color: #cead00;
   border-width: 0.5ex;
@@ -201,16 +225,19 @@
   border-color: #8a7400;
 }
 
-#board .tile.proposed .proposals {
-  position: absolute;
+#board .tile .proposals {
   top: auto;
   bottom: 0;
+}
+
+#board .tile .tileOverlay {
+  position: absolute;
   left: 0;
   right: 0;
   text-align: center;
   overflow: hidden;
   width: 100%;
-  max-height: 100%;
+  max-height: 33%;
   font-size: 1em;
   color: white;
 }
