@@ -15,6 +15,11 @@ var config = module.exports = {
   restartWarningMinute: 20,
   restartWarningSecond: 2,
 
+  // Default room settings
+  difficulty: "normal",
+  mode: "casual",
+  consensus: "single",
+
   // Set to non-null to use fixed team names instead of using color names
   redTeamName: null,
   blueTeamName: null,

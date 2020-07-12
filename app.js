@@ -94,9 +94,9 @@ class Room {
     this.password = '' + pass
     this.players = {}
     this.game = new Game(settings.defaultCardPacks)
-    this.difficulty = 'normal'
-    this.mode = 'casual'
-    this.consensus = 'single'
+    this.difficulty = settings.difficulty
+    this.mode = settings.mode
+    this.consensus = settings.consensus
     this.overallScoreRed = 0
     this.overallScoreBlue = 0
     const redColor = settings.redPalette[0]
