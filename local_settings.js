@@ -1,5 +1,6 @@
 var config = module.exports = {
   timeout: 3600, // one hour AFK timeout
+  consensus: "consensus",
   redPalette: [
     {name: "red", deep: "#B32728", light: "rgb(236, 170, 170)"},
     {name: "green", deep: "#008000", light: "rgb(168, 235, 216)"},
