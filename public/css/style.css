@@ -84,6 +84,40 @@ Grey: #D6D2C9
     float: left;
   }
 
+  #card-packs #show-all-card-packs-label {
+    display: inline-block !important;
+    text-align: center;
+    font-size: 1.4em;
+    line-height: 1.2;
+    background: #686c6d;
+    border: 2px solid #686c6d;
+    border-radius: 5px;
+    color: #323032;
+    margin-bottom: 0.7em;
+  }
+
+  #card-packs #show-all-card-packs:checked + #show-all-card-packs-label {
+    background: #323032;
+    color: #F8FDFF;
+    text-decoration: underline;
+  }
+
+  #card-packs #show-all-card-packs + #show-all-card-packs-label::before {
+    content: "⊞ "
+  }
+
+  #card-packs #show-all-card-packs:checked + #show-all-card-packs-label::before {
+    content: "⊟ "
+  }
+
+  #card-packs button {
+    display: none;
+  }
+
+  #card-packs #show-all-card-packs:checked ~ button {
+    display: inline-block;
+  }
+
   #space {
     width: 0px !important;
   }
@@ -758,10 +792,19 @@ button {
   background: #F8FDFF;
   color: #323032;
   font-weight: bold;
+  display: inline-block !important;
 }
 
 #card-packs button:hover {
   background: #686c6d;
+}
+
+#card-packs #show-all-card-packs-label {
+  display: none;
+}
+
+#card-packs #show-all-card-packs {
+  display: none;
 }
 
 #controls {
