@@ -62,6 +62,14 @@ app.use((req, res, next) => {
 // Files for client
 app.use(express.static('public'))
 
+// Simple status page
+app.get('/status', function (req, res) {
+  res.send({
+    players: Object.keys(PLAYER_LIST).length,
+    rooms: Object.keys(ROOM_LIST).length
+  })
+})
+
 // Websocket
 let io = require('socket.io')(server)
 
