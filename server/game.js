@@ -3,16 +3,28 @@ let fs = require('fs')
 let readline = require('readline')
 
 const cardPacks = {}
+const wordsJsonFilename = './server/words.json'
+const wordsJson = JSON.parse(fs.readFileSync(wordsJsonFilename, 'utf8'))
 
 // Codenames Game
 class Game{
   static loadCardPack(cardPack) {
-    const words = []
-    cardPacks[cardPack.name] = words
-    readline.createInterface({
-      input: fs.createReadStream(cardPack.filename),
-      terminal: false
-    }).on('line', (line) => {words.push(line)})
+    if (cardPack.jsonName) {
+      let json = null;
+      if (cardPack.filename && cardPack.filename != wordsJsonFilename) {
+        json = JSON.parse(fs.readFileSync(cardPack.filename, 'utf8'))
+      } else {
+        json = wordsJson
+      }
+      cardPacks[cardPack.name] = json[cardPack.jsonName]
+    } else {
+      const words = []
+      cardPacks[cardPack.name] = words
+      readline.createInterface({
+        input: fs.createReadStream(cardPack.filename),
+        terminal: false
+      }).on('line', (line) => {words.push(line)})
+    }
   }
 
   constructor(cardPackNames){
