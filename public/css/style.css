@@ -662,6 +662,12 @@ button {
 
 #players #panel #join-red:hover {
   color: var(--red-team-deep-color, #B32728);
+
+  background:
+    radial-gradient(circle at 100% 50%, transparent 20%, rgba(255,255,255,.05) 21%, rgba(255,255,255,.05) 34%, transparent 35%, transparent),
+    radial-gradient(circle at 0% 50%, transparent 20%, rgba(255,255,255,.05) 21%, rgba(255,255,255,.05) 34%, transparent 35%, transparent) 0 -20px !important;
+  background-color: #323032 !important;
+  background-size: 30px 40px !important;
 }
 
 #players #panel #join-blue{
@@ -677,6 +683,13 @@ button {
 
 #players #panel #join-blue:hover {
   color: var(--blue-team-deep-color, #11779F);
+
+  background:
+    radial-gradient(rgba(255,255,255,.1) 15%, transparent 16%),
+    radial-gradient(rgba(255,255,255,.1) 15%, transparent 16%),
+    #323032 !important;
+  background-position: 0 0, 15px 15px !important;
+  background-size:30px 30px !important;
 }
 
 #players #panel #join-observers{
