@@ -26,11 +26,11 @@ var config = module.exports = {
 
   redPalette: [
     {name: "red", deep: "#B32728", light: "rgb(236, 170, 170)"},
-    {name: "purple", deep: "#AA69DD", light: "rgb(216, 191, 216)"},
+    {name: "purple", deep: "#722791", light: "rgb(216, 191, 216)"}
   ],
   bluePalette: [
     {name: "blue", deep: "#11779F", light: "rgb(168, 216, 235)"},
-    {name: "green", deep: "#008000", light: "rgb(168, 235, 216)"},
+    {name: "green", deep: "#008000", light: "rgb(168, 235, 216)"}
   ],
 
   defaultCardPacks: ["English (Original)"],
@@ -40,6 +40,8 @@ var config = module.exports = {
     {name: "English (Duet)", jsonName: "English (Duet)"},
     // The Undercover word list is slightly different in words.json.
     {name: "English (Undercover) [NSFW]", filename: "./server/undercover-words.txt"},
+    // More English popular/general words
+    {name: "English (Extra)", filename: "./server/english-extra-words.txt"},
     {name: "Czech", jsonName: "Czech"},
     {name: "German (Original)", jsonName: "German (Original)"},
     {name: "German (Duett)", jsonName: "German (Duett)"},
@@ -61,11 +63,10 @@ var config = module.exports = {
     {name: "Serbian", jsonName: "Serbian"},
     {name: "Russian", jsonName: "Russian"},
     {name: "Albanian", jsonName: "Albanian"},
-    {name: "Hullor Pack", filename: "./server/hullor-words.txt"},
-    {name: "Bengali Pack", filename: "./server/bengali-words.txt"},
+    {name: "Bengali", filename: "./server/bengali-words.txt"}
   ],
   // additionalCardPacks is appended to the cardPacks list. It's left
   // blank here so it can be set in local_settings.js without overriding
   // cardPacks.
-  additionalCardPacks: [],
+  additionalCardPacks: []
 }
