@@ -7,7 +7,7 @@ var config = module.exports = {
   ],
   bluePalette: [
     {name: "blue", deep: "#11779F", light: "rgb(168, 216, 235)"},
-    {name: "purple", deep: "#AA69DD", light: "rgb(216, 191, 216)"},
+    {name: "purple", deep: "#722791", light: "rgb(216, 191, 216)"},
   ],
   additionalCardPacks: [
     {name: "Star Trek: TNG Pack", filename: "./server/st-tng-words.txt"},
