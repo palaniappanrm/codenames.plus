@@ -26,11 +26,11 @@ var config = module.exports = {
 
   redPalette: [
     {name: "red", deep: "#B32728", light: "rgb(236, 170, 170)"},
-    {name: "purple", deep: "#722791", light: "rgb(216, 191, 216)"}
+    {name: "purple", deep: "#722791", light: "rgb(216, 191, 216)"},
   ],
   bluePalette: [
     {name: "blue", deep: "#11779F", light: "rgb(168, 216, 235)"},
-    {name: "green", deep: "#008000", light: "rgb(168, 235, 216)"}
+    {name: "green", deep: "#008000", light: "rgb(168, 235, 216)"},
   ],
 
   defaultCardPacks: ["English (Original)"],
@@ -63,10 +63,10 @@ var config = module.exports = {
     {name: "Serbian", jsonName: "Serbian"},
     {name: "Russian", jsonName: "Russian"},
     {name: "Albanian", jsonName: "Albanian"},
-    {name: "Bengali", filename: "./server/bengali-words.txt"}
+    {name: "Bengali", filename: "./server/bengali-words.txt"},
   ],
   // additionalCardPacks is appended to the cardPacks list. It's left
   // blank here so it can be set in local_settings.js without overriding
   // cardPacks.
-  additionalCardPacks: []
+  additionalCardPacks: [],
 }
