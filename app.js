@@ -585,12 +585,12 @@ function clickTile(socket, data){
         // And they must be correct answers.
         if (game.clue === null && tile.type === playerDetails.team){
           const word = tile.word
-          const idx = game.clueWords.indexOf(word)
-          if (idx > -1){
-            game.clueWords.splice(idx, 1)
-          } else {
-            game.clueWords.push(word)
+          // Use Set to be sure there aren't duplicates.
+          const clueWords = new Set(game.clueWords)
+          if (!clueWords.delete(word)){
+            clueWords.add(word)
           }
+          game.clueWords = [...clueWords]
           const num = game.clueWords.length
           socket.emit('clueCountValue', {value: num == 0 ? '' : num})
           gameUpdate(room, socket.id)  // Update just the spymaster
