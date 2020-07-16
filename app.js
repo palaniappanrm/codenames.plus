@@ -571,7 +571,12 @@ function clickTile(socket, data){
   // Ignore all clicks on tiles that have already been flipped.
   const game = roomDetails.game
   const tile = game.board[data.i][data.j]
-  if (tile.flipped) return
+  if (tile.flipped) {
+    if (playerDetails.role === 'spymaster'){
+      socket.emit('clueCountValue', null)
+    }
+    return
+  }
 
   if (playerDetails.team === roomDetails.game.turn){ // If it was this players turn
     if (!roomDetails.game.over){  // If the game is not over
@@ -587,8 +592,9 @@ function clickTile(socket, data){
             game.clueWords.push(word)
           }
           const num = game.clueWords.length
-          socket.emit('clueCountValue', num == 0 ? '' : num)
+          socket.emit('clueCountValue', {value: num == 0 ? '' : num})
           gameUpdate(room, socket.id)  // Update just the spymaster
+          return
         }
       }else{ // If the client isnt spymaster
         var doFlip = true
@@ -622,6 +628,10 @@ function clickTile(socket, data){
         gameUpdate(room)  // Update everyone in the room
       }
     }
+  }
+  // Fall-through means that spymaster clicked an invalid tile.
+  if (playerDetails.role === 'spymaster'){
+    socket.emit('clueCountValue', null)
   }
 }
 

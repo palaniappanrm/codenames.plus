@@ -186,6 +186,10 @@ endTurn.onclick = () => {
 // User Clicks Tile
 function tileClicked(i,j){
   socket.emit('clickTile', {i:i, j:j})
+  if (playerRole === 'spymaster') {
+    // Wait for server response
+    clueDeclareButton.disabled = true
+  }
 }
 // User Clicks About
 buttonAbout.onclick = () => {
@@ -304,7 +308,10 @@ socket.on('switchRoleResponse', (data) =>{  // Response to Switching Role
 })
 
 socket.on('clueCountValue', (data) => {
-  clueCount.value = data
+  if (data && data.value !== undefined) {
+    clueCount.value = data.value
+  }
+  clueDeclareButton.disabled = false
 })
 
 socket.on('customWords', (data) => {
