@@ -190,8 +190,8 @@
   color: #F8FDFF;
 
   background:
-    radial-gradient(circle at 100% 50%, transparent 20%, rgba(255,255,255,.3) 21%, rgba(255,255,255,.3) 34%, transparent 35%, transparent),
-    radial-gradient(circle at 0% 50%, transparent 20%, rgba(255,255,255,.3) 21%, rgba(255,255,255,.3) 34%, transparent 35%, transparent) 0 -20px;
+    radial-gradient(circle at 100% 50%, transparent 20%, rgba(255,255,255,.2) 21%, rgba(255,255,255,.2) 34%, transparent 35%, transparent),
+    radial-gradient(circle at 0% 50%, transparent 20%, rgba(255,255,255,.2) 21%, rgba(255,255,255,.2) 34%, transparent 35%, transparent) 0 -20px;
   background-color: var(--red-team-deep-color, #B32728);
   background-size: 30px 40px;
 }
