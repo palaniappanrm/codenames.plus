@@ -799,6 +799,16 @@ button {
   background: #686c6d;
 }
 
+#card-packs #custom-word-list {
+  display: none;
+  width: 100%;
+  min-height: 10em;
+}
+
+#card-packs #custom-pack.enabled + #custom-word-list {
+  display: inline-block;
+}
+
 #card-packs #show-all-card-packs-label {
   display: none;
 }

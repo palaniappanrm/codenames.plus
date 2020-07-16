@@ -87,7 +87,7 @@ const heroku = new Heroku({ token:process.env.API_TOKEN})// DELETE requests
 const Game = require('./server/game.js')
 settings.cardPacks.forEach(Game.loadCardPack)
 settings.additionalCardPacks.forEach(Game.loadCardPack)
-const cardPackNames = settings.cardPacks.concat(settings.additionalCardPacks).map(pack => pack.name)
+const cardPackNames = settings.cardPacks.concat(settings.additionalCardPacks).map(pack => pack.name).concat(settings.allowCustomCardPack ? ["Custom"] : [])
 
 // Objects to keep track of sockets, rooms and players
 let SOCKET_LIST = {}
@@ -305,10 +305,6 @@ io.sockets.on('connection', function(socket){
     } else {
       game.cardPackNames.push(data.pack)
     }
-    // If all options are disabled, re-enable the default packs
-    if (game.cardPackNames.length == 0) {
-      game.cardPackNames = [...settings.defaultCardPacks]
-    }
 
     game.updateWordPool()
     gameUpdate(room)
@@ -383,10 +379,12 @@ function joinRoom(socket, data){
         socket.emit('joinResponse', {success:false, msg:'Enter A Valid Nickname'})
       } else {  // If the room exists and the password / nickname are valid, proceed
         let player = new Player(userName, roomName, socket)   // Create a new player
-        ROOM_LIST[roomName].players[socket.id] = player       // Add player to room
+        const room = ROOM_LIST[roomName]
+        room.players[socket.id] = player       // Add player to room
         player.joinTeam()                                     // Distribute player to team
         socket.emit('joinResponse', {success:true, msg:"", playerName:userName})   // Tell client join was successful
         gameUpdate(roomName)                                  // Update the game for everyone in this room
+        socket.emit('customWords', {customWords: room.game.customWordsList.join("\n")})
         // Server Log
         logStats(socket.id + "(" + player.nickname + ") JOINED '" + ROOM_LIST[player.room].room + "'(" + Object.keys(ROOM_LIST[player.room].players).length + ")")
       }
@@ -501,16 +499,25 @@ function randomizeTeams(socket){
 function newGame(socket, data){
   if (!PLAYER_LIST[socket.id]) return // Prevent Crash
   if (!['red','blue'].includes(PLAYER_LIST[socket.id].team)) return
-  let room = PLAYER_LIST[socket.id].room  // Get the room that the client called from
-  if(ROOM_LIST[room].game.over || data.doubleConfirmed) { //Start new game if either the game is over or the clicker has double confirmed
-    ROOM_LIST[room].game.init();      // Make a new game for that room
+  const room = PLAYER_LIST[socket.id].room  // Get the room that the client called from
+  const game = ROOM_LIST[room].game
+  if(game.over || data.doubleConfirmed) { //Start new game if either the game is over or the clicker has double confirmed
+    game.setCustomWords(data.customWords);
+    if (game.words.length < 25) {
+      socket.emit('newGameResponse', {success: false, message: 'Too few words. You must select a collection of at least 25 distinct words.' + (data.customWords ? ' The custom word list may be delimited by new lines, commas, or semicolons.' : '') + (game.cardPackNames.length == 0 ? ' You must select at least one card pack.' : '')})
+      return
+    }
+    game.init();      // Make a new game for that room
 
     // Make everyone in the room a guesser and tell their client the game is new
+    const customWords = game.customWordsList.join("\n")
     for (let player in ROOM_LIST[room].players) {
       PLAYER_LIST[player].role = 'guesser';
       PLAYER_LIST[player].guessProposal = null;
-      SOCKET_LIST[player].emit('switchRoleResponse', {success: true, role: 'guesser'})
-      SOCKET_LIST[player].emit('newGameResponse', {success: true})
+      const playerSocket = SOCKET_LIST[player]
+      playerSocket.emit('switchRoleResponse', {success: true, role: 'guesser'})
+      playerSocket.emit('newGameResponse', {success: true})
+      playerSocket.emit('customWords', {customWords: customWords})
     }
     gameUpdate(room) // Update everyone in the room
   } else {

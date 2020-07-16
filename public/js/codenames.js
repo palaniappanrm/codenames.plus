@@ -259,8 +259,15 @@ socket.on('timerUpdate', (data) => {        // Server update client timer
 socket.on('newGameResponse', (data) => {    // Response to New Game
   if (data.success){
     wipeBoard();
+  }else if (data.message){
+    alert(data.message)
   }else if (confirm("Are you sure you want to start a new game?")){
-    socket.emit('newGame', {doubleConfirmed: true})
+    const customPackButton = document.getElementById('custom-pack')
+    let customWords = null
+    if (customPackButton && customPackButton.classList.contains('enabled')) {
+      customWords = document.getElementById('custom-word-list').value
+    }
+    socket.emit('newGame', {doubleConfirmed: true, customWords: customWords})
   }
 })
 
@@ -298,6 +305,10 @@ socket.on('switchRoleResponse', (data) =>{  // Response to Switching Role
 
 socket.on('clueCountValue', (data) => {
   clueCount.value = data
+})
+
+socket.on('customWords', (data) => {
+  document.getElementById('custom-word-list').value = data.customWords
 })
 
 socket.on('gameState', (data) =>{           // Response to gamestate update
@@ -402,6 +413,14 @@ function updateCardPackButtons(availableCardPacks){
       socket.emit('changeCards', {pack:e.srcElement.innerText})
     }
     cardPacks.appendChild(button)
+
+    if (name == "Custom") {
+      button.id = "custom-pack"
+      const customList = document.createElement('textArea')
+      customList.id = "custom-word-list"
+      customList.placeholder = "Add custom words here."
+      cardPacks.appendChild(customList)
+    }
   })
 }
 
@@ -410,9 +429,11 @@ function updatePacks(game){
   const cardPacks = document.getElementById("card-packs")
 
   cardPacks.querySelectorAll('button').forEach(button => {
-    button.className = (game.cardPackNames.includes(button.innerText)
-                          ? 'enabled'
-                          : '')
+    if (game.cardPackNames.includes(button.innerText)) {
+      button.classList.add('enabled');
+    } else {
+      button.classList.remove('enabled');
+    }
   })
 
   const numWords = game.words.length

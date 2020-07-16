@@ -33,6 +33,7 @@ class Game{
     this.allUsedWords = []
     // Copy cardPackNames list
     this.cardPackNames = [...cardPackNames]
+    this.customWordsList = []
     this.updateWordPool()
 
     this.init();
@@ -52,6 +53,11 @@ class Game{
     this.log = []     // Initialize empty log
     this.clue = null
     this.clueWords = []
+  }
+
+  setCustomWords(customWords){
+    this.customWordsList = customWords ? [...new Set(customWords.toUpperCase().split(new RegExp('[\r\n,;]', 'g')).map(word => word.trim()).filter(word => word.length > 0))] : []
+    this.updateWordPool();
   }
 
   // Check the number of unflipped team tiles and determine if someone won
@@ -231,7 +237,7 @@ class Game{
 
   updateWordPool(){
     let pool = []
-    this.cardPackNames.forEach(name => pool = pool.concat(cardPacks[name]))
+    this.cardPackNames.forEach(name => pool = pool.concat(name == "Custom" ? this.customWordsList : cardPacks[name]))
     // Keep only unique words
     this.words = [...new Set(pool)]
   }

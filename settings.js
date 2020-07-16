@@ -34,6 +34,7 @@ var config = module.exports = {
   ],
 
   defaultCardPacks: ["English (Original)"],
+  allowCustomCardPack: true,
   cardPacks: [
     {name: "English (Original)", jsonName: "English (Original)"},
     {name: "English (Duet)", jsonName: "English (Duet)"},
