@@ -230,6 +230,7 @@ socket.on('serverStats', (data) => {        // Client gets server stats
 
 socket.on('joinResponse', (data) =>{        // Response to joining room
   if(data.success){
+    playerRole = 'guesser'
     joinDiv.style.display = 'none'
     gameDiv.style.display = 'block'
     joinErrorMessage.innerText = ''
@@ -240,6 +241,7 @@ socket.on('joinResponse', (data) =>{        // Response to joining room
 
 socket.on('createResponse', (data) =>{      // Response to creating room
   if(data.success){
+    playerRole = 'guesser'
     joinDiv.style.display = 'none'
     gameDiv.style.display = 'block'
     joinErrorMessage.innerText = ''
@@ -253,6 +255,7 @@ socket.on('leaveResponse', (data) =>{       // Response to leaving room
     joinDiv.style.display = 'block'
     gameDiv.style.display = 'none'
     wipeBoard();
+    playerRole = 'guesser'
   }
 })
 
