@@ -32,6 +32,7 @@ let express = require('express')
 // Create app
 let app = express()
 app.disable('x-powered-by');
+let address = process.env.MY_POD_IP
 
 //Set up server
 let server = app.listen(process.env.PORT || settings.port, listen);
@@ -43,7 +44,7 @@ let requireHttps = (process.env.REQUIRE_HTTPS == "true"
 function listen(){
   let host = server.address().address;
   let port = server.address().port;
-  console.log('Codenames Server Started at http://' + host + ':' + port);
+  console.log('Codenames Server Started at http://' + host + "-" + address + ':' + port);
 
   if (requireHttps) {
     console.log("Https Required");
@@ -184,6 +185,7 @@ io.sockets.on('connection', function(socket){
 
   // Pass server stats to client
   socket.emit('serverStats', {
+    address: address,
     players: Object.keys(PLAYER_LIST).length,
     rooms: Object.keys(ROOM_LIST).length
   })
@@ -340,17 +342,17 @@ function createRoom(socket, data){
   } else {
     if (roomName === "") {
       // Tell the client they need a valid room name
-      socket.emit('createResponse', {success:false, msg:'Enter A Valid Room Name'})
+      socket.emit('createResponse', {address: address, success:false, msg:'Enter A Valid Room Name'})
     } else {
       if (userName === ''){
         // Tell the client they need a valid nickname
-        socket.emit('createResponse', {success:false, msg:'Enter A Valid Nickname'})
+        socket.emit('createResponse', {address: address, success:false, msg:'Enter A Valid Nickname'})
       } else {    // If the room name and nickname are both valid, proceed
         new Room(roomName, passName)                          // Create a new room
         let player = new Player(userName, roomName, socket)   // Create a new player
         ROOM_LIST[roomName].players[socket.id] = player       // Add player to room
         player.joinTeam()                                     // Distribute player to team
-        socket.emit('createResponse', {success:true, msg: "", playerName:userName})// Tell client creation was successful
+        socket.emit('createResponse', {address: address, success:true, msg: "", playerName:userName})// Tell client creation was successful
         gameUpdate(roomName)                                  // Update the game for everyone in this room
         logStats(socket.id + "(" + player.nickname + ") CREATED '" + ROOM_LIST[player.room].room + "'(" + Object.keys(ROOM_LIST[player.room].players).length + ")")
       }
